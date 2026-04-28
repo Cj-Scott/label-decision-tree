@@ -1,0 +1,3218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>SMB Information Protection Guided Labeling Assistant</title>
+  <style>
+    /* Use semantic tokens for all additions so light mode, dark mode, and accessibility support stay inherited by default. */
+    /* Visual language is Fluent 2-inspired: neutral surfaces, restrained elevation, consistent corner radii, and accessible accent usage. */
+    :root {
+      color-scheme: light dark;
+      --bg-start: #f4f7fc;
+      --bg-end: #e8eef8;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-alt: rgba(244, 248, 253, 0.96);
+      --panel-visited: rgba(228, 238, 250, 0.96);
+      --panel-strong-start: rgba(251, 253, 255, 0.98);
+      --panel-strong-end: rgba(239, 245, 252, 0.98);
+      --text: #132033;
+      --muted: #4e5f78;
+      --border: #c6d2e3;
+      --accent: #005fb8;
+      --focus-ring: #ffbf47;
+      --shadow: rgba(15, 23, 42, 0.12);
+      --button-primary-bg: #005fb8;
+      --button-primary-text: #ffffff;
+      --button-secondary-bg: #eef4fb;
+      --button-secondary-text: #132033;
+      --button-secondary-border: #b6c8e3;
+      --button-yes-bg: #1f7a41;
+      --button-no-bg: #a33c3c;
+      --button-danger-text: #ffffff;
+      --question-accent: #2563eb;
+      --badge-text: #081522;
+      --selection-ring: rgba(19, 32, 51, 0.12);
+      --accent-soft: rgba(0, 95, 184, 0.08);
+      --hero-border: rgba(0, 95, 184, 0.16);
+      --hero-glow: rgba(0, 95, 184, 0.08);
+      --yes-chip-bg: rgba(31, 122, 65, 0.15);
+      --yes-chip-text: #14522c;
+      --no-chip-bg: rgba(163, 60, 60, 0.15);
+      --no-chip-text: #6d2020;
+      --disclaimer-border: rgba(160, 102, 0, 0.3);
+      --disclaimer-bg: rgba(255, 245, 214, 0.95);
+      --disclaimer-text: #5c4300;
+      --disclaimer-strong: #332500;
+      --radius-card: 12px;
+      --radius-control: 8px;
+      --radius-pill: 999px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --public: #4cc2ff;
+      --general: #7fd18c;
+      --conf-all: #ffc14d;
+      --conf-specific: #ff9f6e;
+      --conf-exception: #c8a84b;
+      --hc-all: #ff6f91;
+      --hc-specific: #d94040;
+      --hc-exception: #a85070;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg-start: #08101c;
+        --bg-end: #0b1220;
+        --panel: rgba(17, 26, 43, 0.94);
+        --panel-alt: rgba(22, 34, 56, 0.92);
+        --panel-visited: rgba(31, 47, 75, 0.92);
+        --panel-strong-start: rgba(14, 23, 39, 0.98);
+        --panel-strong-end: rgba(18, 28, 46, 0.98);
+        --text: #e8eefb;
+        --muted: #aeb9d4;
+        --border: #25314a;
+        --accent: #4cc2ff;
+        --focus-ring: #ffd166;
+        --shadow: rgba(0, 0, 0, 0.24);
+        --button-primary-bg: #2d7dff;
+        --button-primary-text: #ffffff;
+        --button-secondary-bg: #22314c;
+        --button-secondary-text: #e8eefb;
+        --button-secondary-border: #365173;
+        --button-yes-bg: #1c8a47;
+        --button-no-bg: #954444;
+        --button-danger-text: #ffffff;
+        --question-accent: #5a8fff;
+        --badge-text: #04111f;
+        --selection-ring: rgba(255, 255, 255, 0.08);
+        --accent-soft: rgba(76, 194, 255, 0.1);
+        --hero-border: rgba(76, 194, 255, 0.2);
+        --hero-glow: rgba(76, 194, 255, 0.08);
+        --yes-chip-bg: rgba(28, 138, 71, 0.18);
+        --yes-chip-text: #91e2ae;
+        --no-chip-bg: rgba(149, 68, 68, 0.18);
+        --no-chip-text: #ffc0c0;
+        --disclaimer-border: rgba(255, 193, 77, 0.35);
+        --disclaimer-bg: rgba(255, 193, 77, 0.1);
+        --disclaimer-text: #ffe7a8;
+        --disclaimer-strong: #fff2c8;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg-start: #08101c;
+      --bg-end: #0b1220;
+      --panel: rgba(17, 26, 43, 0.94);
+      --panel-alt: rgba(22, 34, 56, 0.92);
+      --panel-visited: rgba(31, 47, 75, 0.92);
+      --panel-strong-start: rgba(14, 23, 39, 0.98);
+      --panel-strong-end: rgba(18, 28, 46, 0.98);
+      --text: #e8eefb;
+      --muted: #aeb9d4;
+      --border: #25314a;
+      --accent: #4cc2ff;
+      --focus-ring: #ffd166;
+      --shadow: rgba(0, 0, 0, 0.24);
+      --button-primary-bg: #2d7dff;
+      --button-primary-text: #ffffff;
+      --button-secondary-bg: #22314c;
+      --button-secondary-text: #e8eefb;
+      --button-secondary-border: #365173;
+      --button-yes-bg: #1c8a47;
+      --button-no-bg: #954444;
+      --button-danger-text: #ffffff;
+      --question-accent: #5a8fff;
+      --badge-text: #04111f;
+      --selection-ring: rgba(255, 255, 255, 0.08);
+      --accent-soft: rgba(76, 194, 255, 0.1);
+      --hero-border: rgba(76, 194, 255, 0.2);
+      --hero-glow: rgba(76, 194, 255, 0.08);
+      --yes-chip-bg: rgba(28, 138, 71, 0.18);
+      --yes-chip-text: #91e2ae;
+      --no-chip-bg: rgba(149, 68, 68, 0.18);
+      --no-chip-text: #ffc0c0;
+      --disclaimer-border: rgba(255, 193, 77, 0.35);
+      --disclaimer-bg: rgba(255, 193, 77, 0.1);
+      --disclaimer-text: #ffe7a8;
+      --disclaimer-strong: #fff2c8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: -48px;
+      padding: 10px 14px;
+      background: var(--button-primary-bg);
+      color: var(--button-primary-text);
+      border-radius: 10px;
+      z-index: 1000;
+      text-decoration: none;
+      transition: top 120ms ease;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-6);
+    }
+
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: 0 18px 44px var(--shadow);
+    }
+
+    .hero {
+      padding: var(--space-6);
+      margin-bottom: var(--space-5);
+      border-color: var(--hero-border);
+      background:
+        linear-gradient(180deg, var(--panel) 0%, var(--panel-alt) 100%),
+        radial-gradient(circle at top right, var(--hero-glow) 0%, transparent 55%);
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0 0 10px;
+    }
+
+    p {
+      margin: 0 0 12px;
+      line-height: 1.5;
+    }
+
+    .subtle {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: var(--space-5);
+      grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+      align-items: start;
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .progress {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin: var(--space-3) 0 var(--space-4);
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--panel-alt);
+      color: var(--muted);
+      border-radius: var(--radius-pill);
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .question-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: var(--space-5);
+      background: var(--panel-alt);
+    }
+
+    .question-help {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: var(--radius-control);
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 120ms ease, opacity 120ms ease, background-color 120ms ease, color 120ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary {
+      background: var(--button-primary-bg);
+      color: var(--button-primary-text);
+    }
+
+    .secondary {
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      border-color: var(--button-secondary-border);
+    }
+
+    .choice-yes {
+      background: var(--button-yes-bg);
+      color: var(--button-danger-text);
+    }
+
+    .choice-no {
+      background: var(--button-no-bg);
+      color: var(--button-danger-text);
+    }
+
+    .result-card {
+      border-radius: var(--radius-card);
+      padding: var(--space-5);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel-strong-start) 0%, var(--panel-strong-end) 100%);
+    }
+
+    .label-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      border-radius: var(--radius-pill);
+      padding: 8px 12px;
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: var(--badge-text);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.7;
+    }
+
+    .result-summary {
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .detail-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .detail-list li {
+      margin-bottom: 8px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .section {
+      margin-top: var(--space-5);
+    }
+
+    .cards,
+    .exception-grid,
+    .industry-grid {
+      display: grid;
+      gap: var(--space-4);
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .label-card,
+    .exception-card,
+    .industry-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--panel-alt);
+      padding: var(--space-4);
+    }
+
+    .label-card h3,
+    .exception-card h3,
+    .industry-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .label-card ul,
+    .exception-card ul,
+    .industry-card ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .hero-actions,
+    .tree-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .tree-panel[hidden] {
+      display: none;
+    }
+
+    .tree-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    /* ---- Visio-style top-down flowchart diagram ---- */
+    .tree-diagram {
+      margin-top: var(--space-4);
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 8px 0 0;
+      text-align: center;
+      /* Native scrollbar hidden replaced by the floating mirror bar below */
+      scrollbar-width: none;
+    }
+
+    .tree-diagram::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Floating scrollbar that sticks to the bottom of the viewport */
+    .tree-float-scrollbar {
+      position: sticky;
+      bottom: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      height: 14px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      border-radius: 0 0 var(--radius-card) var(--radius-card);
+      z-index: 10;
+      margin-top: 2px;
+    }
+
+    .tree-float-scrollbar-inner {
+      height: 1px;
+    }
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .zoom-btn {
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+      border-radius: var(--radius-control);
+    }
+    .zoom-label {
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 42px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+    }
+
+    /* Outermost container centered, expands as wide as the tree needs */
+    .vd-root {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: max-content;
+      padding: 0 var(--space-3);
+    }
+
+    /* One node stacked above its optional children */
+    .vd-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Vertical connector line */
+    .vd-stem {
+      width: 2px;
+      height: 14px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .vd-stem.short {
+      height: 6px;
+    }
+
+    /* Row of sibling branches */
+    .vd-row {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* Individual branch column */
+    .vd-branch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 2px;
+      position: relative;
+    }
+
+    /* Horizontal crossbar each sibling draws half the bar toward its neighbor */
+    .vd-branch::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      height: 2px;
+      background: var(--border);
+      left: 0;
+      right: 0;
+    }
+
+    /* First child: bar runs from own center to right edge */
+    .vd-branch:first-child:not(:last-child)::before {
+      left: 50%;
+    }
+
+    /* Last child: bar runs from left edge to own center */
+    .vd-branch:last-child:not(:first-child)::before {
+      right: 50%;
+    }
+
+    /* Only child: straight vertical no horizontal bar */
+    .vd-branch:only-child::before {
+      display: none;
+    }
+
+    /* Flowchart node box */
+    .vd-node {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-card);
+      background: var(--panel-alt);
+      padding: 8px 12px;
+      min-width: 160px;
+      max-width: 220px;
+      text-align: center;
+      box-shadow: 0 2px 8px var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    .vd-node.question {
+      border-top: 4px solid var(--question-accent);
+    }
+
+    /* Result nodes use label color set inline via style attribute */
+    .vd-node.result {
+      border-top-width: 4px;
+      border-top-style: solid;
+    }
+
+    .vd-node.visited {
+      background: var(--panel-visited);
+    }
+
+    .vd-node.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(76, 194, 255, 0.22);
+    }
+
+    .vd-node.selected {
+      box-shadow: 0 0 0 2px var(--selection-ring);
+    }
+
+    /* Node content typography */
+    .node-type {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .node-title {
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-size: 12px;
+    }
+
+    .node-copy {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    /* Branch-label chips sit on the connector stem between parent and child */
+    .branch-label {
+      display: inline-block;
+      margin: 0;
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      font-size: 9px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .branch-label.yes {
+      background: var(--yes-chip-bg);
+      color: var(--yes-chip-text);
+    }
+
+    .branch-label.no {
+      background: var(--no-chip-bg);
+      color: var(--no-chip-text);
+    }
+
+    .disclaimer-banner {
+      margin-top: var(--space-4);
+      padding: 14px var(--space-4);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--disclaimer-border);
+      background: var(--disclaimer-bg);
+      color: var(--disclaimer-text);
+    }
+
+    .disclaimer-banner strong {
+      color: var(--disclaimer-strong);
+    }
+
+    .kicker {
+      display: inline-block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .fluent-note {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px 10px;
+      margin-top: var(--space-2);
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ---- Context panel ---- */
+    .reg-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--space-2) var(--space-3);
+      margin-top: var(--space-2);
+    }
+    .reg-notes {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-left: 3px solid var(--accent);
+      background: var(--surface-2, rgba(0,0,0,0.04));
+      border-radius: 0 6px 6px 0;
+    }
+    .reg-notes-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-2);
+      margin: 0 0 6px 0;
+    }
+    .reg-notes ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    .reg-notes li {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+    .reg-notes li:last-child { margin-bottom: 0; }
+    .reg-suggested {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* ---- TOOL ANNOTATION ---- */
+    .card-tool-annotation {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-control);
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    .card-tool-annotation-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 4px;
+    }
+    .card-tool-annotation-rationale {
+      font-size: 12px;
+      color: var(--text);
+      margin: 0 0 2px;
+    }
+    .card-tool-annotation-path {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .context-panel {
+      margin-bottom: var(--space-5);
+      border-left: 4px solid var(--accent);
+    }
+
+    .context-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      margin-top: var(--space-4);
+    }
+
+    .context-field > label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      font-size: 14px;
+    }
+
+    .context-field > fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .context-field > fieldset > legend {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: var(--space-3);
+      padding: 0;
+    }
+
+    .context-select {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-control);
+      background: var(--panel-alt);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .context-select:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Checkbox grid: 3 cols wide, 2 medium, 1 narrow */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-2);
+    }
+
+    @media (max-width: 840px) {
+      .checkbox-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: 8px 10px;
+      border-radius: var(--radius-control);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color 120ms ease, border-color 120ms ease;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .checkbox-item:hover {
+      background: var(--accent-soft);
+      border-color: var(--border);
+    }
+
+    .checkbox-item:focus-within {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    /* ---- Filter chip ---- */
+    .filter-chip-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+      min-height: 0;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 5px 10px 5px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--hero-border);
+    }
+
+    .filter-chip-clear {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 0;
+      line-height: 1;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 120ms ease;
+    }
+
+    .filter-chip-clear:hover {
+      background: var(--accent-soft);
+      transform: none;
+    }
+
+    /* ---- Card highlight / pulse animation ---- */
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 var(--accent), 0 2px 8px var(--shadow); }
+      55%  { box-shadow: 0 0 0 8px transparent, 0 2px 8px var(--shadow); }
+      100% { box-shadow: 0 0 0 0 transparent, 0 2px 8px var(--shadow); }
+    }
+
+    .card-highlight {
+      border-color: var(--accent) !important;
+      border-width: 2px !important;
+      animation: pulse-ring 1s ease-out forwards;
+    }
+
+    /* ---- Change context row ---- */
+    .change-context-row {
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border);
+    }
+
+    .change-context-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .change-context-btn:hover {
+      opacity: 0.8;
+      transform: none;
+    }
+
+    /* ---- Ensure hidden attribute always hides ---- */
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+
+    /* ---- EXPORT BAR ---- */
+    .export-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+
+    .export-bar-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: var(--space-1);
+    }
+
+    .export-bar-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 var(--space-1);
+      flex-shrink: 0;
+    }
+
+    .btn-export {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: var(--radius-control);
+      border: 1px solid var(--button-secondary-border);
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      cursor: pointer;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    .btn-export:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-export:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-export.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ---- EDIT MODE ---- */
+    .label-card {
+      position: relative;
+    }
+
+    .card-remove-btn {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+      z-index: 2;
+    }
+
+    .card-remove-btn:hover {
+      background: var(--button-no-bg);
+      color: #fff;
+      border-color: var(--button-no-bg);
+    }
+
+    .reference-edit-mode .card-remove-btn {
+      display: flex;
+    }
+
+    .reference-edit-mode .label-card {
+      outline: 2px dashed var(--border);
+      outline-offset: -2px;
+    }
+
+    @media print {
+      /* Suppress the live page entirely when the fallback window.print() is called */
+      body * { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <main id="mainContent" class="page">
+    <header class="hero">
+      <div class="eyebrow">Introduction</div>
+      <h1>SMB Information Protection Guided Labeling Assistant</h1>
+      <p>This draft turns the 8-label DEFEND-aligned model into a working decision tool with common examples and explicit exceptions in one interactive flow.</p>
+      <!--<div class="fluent-note">Fluent 2-inspired interface</div>-->
+      <div class="hero-actions">
+        <button id="themeToggleButton" class="secondary" type="button" aria-label="Change color theme">Theme: Auto</button>
+      </div>
+      <div class="disclaimer-banner">
+        <strong>Disclaimer:</strong>
+        This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.
+      </div>
+    </header>
+
+    <!-- Context-gathering panel: shown first, hidden after Start is clicked -->
+    <section id="contextPanel" class="panel context-panel" aria-labelledby="contextHeading">
+      <div class="kicker">Setup</div>
+      <h2 id="contextHeading">Tell us about your context</h2>
+      <p class="subtle">Help us tailor the decision flow and reference guidance to your industry. Select your industry to enable the decision flow. For specific labeling questions, use the <strong>Start decision flow</strong> button below — the Reference, Exceptions, and Examples sections will dynamically update as you answer.</p>
+      <form id="contextForm" class="context-form" onsubmit="return false;">
+        <div class="context-field">
+          <label for="industrySelect">What industry best describes your organization?</label>
+          <select id="industrySelect" class="context-select" aria-required="true">
+            <option value="">&#8212; Select an industry &#8212;</option>
+            <option value="healthcare">Healthcare / Clinics</option>
+            <option value="financial">Financial Services &amp; Insurance</option>
+            <option value="legal">Legal &amp; Accounting</option>
+            <option value="retail">Retail &amp; eCommerce</option>
+            <option value="manufacturing">Manufacturing &amp; Distribution</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="context-field">
+          <fieldset>
+            <legend>What types of data are you working with? <span style="font-weight:400">(select all that apply)</span></legend>
+            <div class="checkbox-grid" id="dataTypeGrid">
+              <!-- Populated by setupContextPanel() -->
+            </div>
+          </fieldset>
+        </div>
+        <div class="context-field">
+          <fieldset>
+            <legend>Which regulations apply to your data? <span style="font-weight:400">(auto-suggested based on your selections)</span></legend>
+            <div class="reg-grid" id="regGrid">
+              <p class="subtle" id="regGridPlaceholder" style="margin:0;font-size:13px;">Select an industry and data types above to see suggested regulations.</p>
+            </div>
+          </fieldset>
+        </div>
+        <div>
+          <button id="startFlowButton" class="primary" type="button" disabled>Start decision flow &#8594;</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Main decision grid: hidden until context is locked -->
+    <div id="mainGrid" class="grid" hidden>
+      <section class="panel" aria-labelledby="decisionFlowHeading">
+        <div class="kicker">Decision flow</div>
+        <h2 id="decisionFlowHeading">Start labeling</h2>
+        <p class="subtle">Answer the questions in order. The tool keeps the label model fixed and follows a consistent escalation path. As you answer, the <strong>Reference</strong>, <strong>Exceptions</strong>, and <strong>Examples</strong> sections below will update to reflect your specific context — use them alongside the flow to validate your label choice.</p>
+
+        <div id="question" class="question-card" role="region" aria-live="polite" aria-atomic="true" tabindex="-1"></div>
+        <div id="changeContextRow" class="change-context-row" hidden>
+          <button id="changeContextBtn" class="change-context-btn" type="button" aria-label="Go back and change your industry and data type selections">&#8592; Change context</button>
+        </div>
+      </section>
+
+      <aside class="panel" aria-labelledby="resultHeading">
+        <div class="kicker">Recommendation</div>
+        <h2 id="resultHeading">Current outcome</h2>
+        <p class="subtle">The recommended sensitivity label based on your answers so far. Review the label name, rationale, and protection baseline before applying it. When you're satisfied, use <strong>Save &amp; label another</strong> to log this result and start a new item, or export everything from the Reference section below.</p>
+        <div id="result" class="result-card" role="status" aria-live="polite" aria-atomic="true" tabindex="-1">
+          <p class="empty-state">No label selected yet. Start with the first question to generate a recommendation.</p>
+        </div>
+      </aside>
+    </div>
+
+    <section id="treePanel" class="panel section tree-panel" aria-labelledby="treeHeading" hidden>
+      <div class="tree-header">
+        <div>
+          <div class="kicker">Visualization</div>
+          <h2 id="treeHeading">Decision tree map</h2>
+          <p class="subtle">This is the end-to-end branch logic. The current question and selected recommendation are highlighted as you work through the flow.</p>
+        </div>
+        <div class="tree-actions">
+          <div class="zoom-controls" role="group" aria-label="Zoom controls">
+            <button id="treeZoomOutBtn" class="secondary zoom-btn" type="button" aria-label="Zoom out">−</button>
+            <span id="treeZoomLabel" class="zoom-label" aria-live="polite">100%</span>
+            <button id="treeZoomInBtn" class="secondary zoom-btn" type="button" aria-label="Zoom in">+</button>
+            <button id="treeFitWidthBtn" class="secondary" type="button">Fit width</button>
+          </div>
+          <button id="closeTreeButton" class="secondary" type="button">Hide tree</button>
+        </div>
+      </div>
+      <div id="treeDiagram" class="tree-diagram" role="img" aria-label="Visual map of the label decision tree"></div>
+      <div id="treeDiagramScrollbar" class="tree-float-scrollbar" aria-hidden="true">
+        <div id="treeDiagramScrollbarInner" class="tree-float-scrollbar-inner"></div>
+      </div>
+    </section>
+
+    <section id="referenceSection" class="panel section" aria-labelledby="modelHeading" hidden>
+      <div class="kicker">Reference</div>
+      <h2 id="modelHeading">8-label DEFEND-aligned model</h2>
+      <p class="subtle">Each card defines one sensitivity label — what it means, the protection baseline it requires, and any regulatory considerations relevant to your context. Cards are filtered to your selected industry and data types. Labels you've confirmed through the decision flow are annotated with a colored badge. Use <strong>Edit labels</strong> to remove any labels you don't need, then export the remaining set as a PDF or CSV.</p>
+      <div id="exportBar" class="export-bar"></div>
+      <div id="filterChipRow" class="filter-chip-row"></div>
+      <div id="labelCards" class="cards"></div>
+    </section>
+
+    <section id="exceptionsSection" class="panel section" aria-labelledby="exceptionsHeading" hidden>
+      <div class="kicker">Exceptions</div>
+      <h2 id="exceptionsHeading">Explicit clarifications to surface in the tree</h2>
+      <p class="subtle">These are known edge cases and boundary conditions for your industry and data types — situations where the default label logic may not apply or where extra care is required. Review them alongside your decision to confirm the recommendation holds, or to identify whether a different label or an escalation path is more appropriate.</p>
+      <div id="exceptionCards" class="exception-grid"></div>
+    </section>
+
+    <section id="examplesSection" class="panel section" aria-labelledby="examplesHeading" hidden>
+      <div class="kicker">Examples</div>
+      <h2 id="examplesHeading">Cross-industry scenarios to keep the tree inclusive</h2>
+      <p class="subtle">Real-world content scenarios mapped to the label model for your industry and selected data types. Use these to validate your decision — if a scenario matches your situation and points to a different label than the tool recommended, revisit your answers or escalate to your compliance team. Examples update dynamically as you change your context selections.</p>
+      <div id="industryCards" class="industry-grid"></div>
+    </section>
+  </main>
+
+  <script>
+    // ---- MODEL (unchanged) ----
+    const model = {
+      labels: {
+        public: {
+          name: "Public",
+          color: "var(--public)",
+          definition: "Content explicitly approved for unrestricted external sharing.",
+          baseline: ["No encryption", "External sharing allowed"],
+          examples: ["Approved external content", "Marketing material", "Published case studies", "Open product documentation"]
+        },
+        general: {
+          name: "General",
+          color: "var(--general)",
+          definition: "Routine internal business information with low disclosure risk. Default email label.",
+          baseline: ["No encryption", "Internal marking only", "Default email label"],
+          examples: ["Routine internal operations", "SOPs", "Low-risk partner coordination", "Aggregate or anonymized operational data", "Meeting notes and internal team briefs"]
+        },
+        confidential_all: {
+          name: "Confidential \ All Employees",
+          color: "var(--conf-all)",
+          definition: "Default label for named business data that stays internal. Default document label.",
+          baseline: ["Marking + encryption", "No external sharing", "Default document label"],
+          examples: ["Customer documents", "Proposals and delivery plans", "Non-public finance", "Row-level customer exports", "Healthcare referrals and treatment plans stored internally", "Manufacturing CAD, BOMs, supplier contracts, or pricing used internally"]
+        },
+        confidential_specific: {
+          name: "Confidential \ Specific People",
+          color: "var(--conf-specific)",
+          definition: "Sensitive content that must be shared with specific named trusted external parties.",
+          baseline: ["Named-user permissions", "Trusted externals allowed on explicit list", "Governed sharing required"],
+          examples: ["Advisor, client, broker, supplier, or auditor collaboration", "Secure client intake and file exchange", "Loan, policy, and account onboarding packs", "Professional services engagement workspaces", "Vendor due diligence and cross-border partner exchange"]
+        },
+        confidential_exception: {
+          name: "Confidential \ Internal Exception",
+          color: "var(--conf-exception)",
+          definition: "Confidential content where encryption breaks a critical LOB workflow or legacy integration. Exception path only.",
+          baseline: ["Marking only — no encryption", "No external sharing", "Exception path; requires justification and quarterly review"],
+          examples: ["ERP-integrated pricing or order management exports", "Add-in-driven reports where encryption breaks downstream systems", "Legacy portal or workflow integrations not yet encryption-compatible"]
+        },
+        hc_all: {
+          name: "Highly Confidential \ All Employees",
+          color: "var(--hc-all)",
+          definition: "Highest-sensitivity content for internal access only. Maximum encryption and access control.",
+          baseline: ["Strong encryption", "Watermarking", "Block unmanaged sharing", "No external access"],
+          examples: ["Payroll and HR records", "Incident files and breach response packs", "Board materials and trade secrets", "Regulated records", "Regulator response packs kept internal"]
+        },
+        hc_specific: {
+          name: "Highly Confidential \ Specific People",
+          color: "var(--hc-specific)",
+          definition: "Highest-sensitivity content that requires access by specific named external parties such as regulators or auditors.",
+          baseline: ["Explicit named-user access only", "Auto-labeling via SITs recommended", "No unmanaged sharing"],
+          examples: ["Regulator responses and legal holds requiring external access", "Auditor diligence packs", "Breach evidence shared with legal or forensic partners", "Court-ordered disclosure packs"]
+        },
+        hc_exception: {
+          name: "Highly Confidential \ Internal Exception",
+          color: "var(--hc-exception)",
+          definition: "Highly confidential content where encryption breaks a critical safety or compliance tooling workflow. Exception path only.",
+          baseline: ["Marking only — no encryption", "No external sharing", "Exception path; requires IT sign-off and quarterly justification"],
+          examples: ["QMS-integrated records where HC encryption breaks safety tooling", "Regulatory-reporting feeds incompatible with HC encryption", "Safety-system exports requiring exception approval"]
+        }
+      },
+      questions: {
+        q1: {
+          text: "Is this content approved for unrestricted external sharing?",
+          help: "If the content is already approved for public release, it routes directly to Public.",
+          yes: { result: "public", rationale: "The content is approved for unrestricted external use." },
+          no: { next: "q2" }
+        },
+        q2: {
+          text: "Is this routine internal business information with low risk if disclosed?",
+          help: "Think SOPs, routine coordination, non-sensitive internal operations, and aggregate or anonymized data. This is the default email label.",
+          yes: { result: "general", rationale: "The content is low-risk internal business information suited for the General default email label." },
+          no: { next: "q3" }
+        },
+        q3: {
+          text: "Does the content include named individuals, customers, suppliers, or non-public business data?",
+          help: "This is the main shift from General into the Confidential branch.",
+          yes: { next: "q4" },
+          no: { result: "general", rationale: "Without named people or non-public business data, the content stays at General." }
+        },
+        q4: {
+          text: "Is the content intended for internal use only — no external recipients?",
+          help: "If the content should remain entirely inside the organization, take the internal path. If external parties are involved, take the external path.",
+          yes: { next: "q5_internal" },
+          no: { next: "q5_external" }
+        },
+        q5_internal: {
+          text: "Does the content include regulated data, incidents, payroll, board materials, or trade secrets?",
+          help: "These are the escalation triggers from Confidential into the Highly Confidential branch.",
+          yes: { next: "q6_hc" },
+          no: { next: "q6_conf" }
+        },
+        q5_external: {
+          text: "Does the content include regulated data, incident evidence, legal holds, or trade secrets requiring external access?",
+          help: "Trusted external sharing alone does not override the need for Highly Confidential when the content is especially sensitive.",
+          yes: { result: "hc_specific", rationale: "Maximum-sensitivity content with named external access requires Highly Confidential \ Specific People." },
+          no: { result: "confidential_specific", rationale: "Sensitive content shared with specific named trusted external parties routes to Confidential \ Specific People." }
+        },
+        q6_conf: {
+          text: "Does encryption break a critical LOB workflow, legacy integration, or add-in that cannot yet be updated?",
+          help: "This is the Internal Exception path. Only use it when encryption genuinely blocks a business-critical system — document the exception and review quarterly.",
+          yes: { result: "confidential_exception", rationale: "When encryption breaks a critical internal workflow, use Confidential \ Internal Exception with marking only. Requires justification." },
+          no: { result: "confidential_all", rationale: "Named or non-public internal data without an encryption exception routes to Confidential \ All Employees — the default document label." }
+        },
+        q6_hc: {
+          text: "Does encryption break a critical safety system, QMS integration, or compliance reporting workflow?",
+          help: "This is the Highly Confidential Internal Exception path. Use only when HC encryption blocks a mission-critical safety or compliance tool — requires IT sign-off.",
+          yes: { result: "hc_exception", rationale: "When HC encryption breaks a critical safety or compliance workflow, use Highly Confidential \ Internal Exception. Requires IT sign-off and quarterly review." },
+          no: { result: "hc_all", rationale: "Highest-sensitivity internal content with no encryption exception routes to Highly Confidential \ All Employees." }
+        }
+      },
+      exceptions: [
+        {
+          title: "Internal Exception labels are not a shortcut",
+          industries: null,
+          dataTypes: null,
+          points: [
+            "Confidential \ Internal Exception and Highly Confidential \ Internal Exception use marking only \u2014 no encryption.",
+            "They exist solely for LOB or legacy workflows where encryption breaks a critical system.",
+            "Each exception must be documented, approved, and reviewed quarterly.",
+            "Do not use them simply to avoid user friction \u2014 fix the integration instead."
+          ]
+        },
+        {
+          title: "Aggregate vs. named data",
+          industries: null,
+          dataTypes: ["personal_ids", "customer_loyalty", "employee_hr", "tax_financial", "health_medical", "payment_data"],
+          points: [
+            "Aggregate or anonymized operational data can remain General.",
+            "Named customer, employee, or partner records should move to Confidential \ All Employees or higher.",
+            "A file mixing named and aggregate records inherits the sensitivity of its most sensitive row."
+          ]
+        },
+        {
+          title: "Built-in SITs vs. custom identifiers",
+          industries: ["healthcare", "financial", "retail", "manufacturing"],
+          dataTypes: ["health_medical", "payment_data", "customer_loyalty", "trade_secrets_ip", "personal_ids"],
+          points: [
+            "Built-in SITs cover most health, finance, HR, and legal cases.",
+            "Custom SITs or EDM are only needed for industry-specific identifiers such as loyalty IDs, claim IDs, engagement IDs, or BOM-linked records.",
+            "Using a custom SIT does not change the label choice by itself."
+          ]
+        },
+        {
+          title: "Geography changes controls, not labels",
+          industries: null,
+          dataTypes: null,
+          points: [
+            "Higher-regulation geographies drive more restriction and encryption.",
+            "This model does not introduce geography-specific labels.",
+            "Apply additional DLP policies or conditional-access rules for higher-regulation regions rather than creating new labels."
+          ]
+        },
+        {
+          title: "HIPAA minimum-necessary rule",
+          industries: ["healthcare"],
+          dataTypes: ["health_medical", "personal_ids", "payment_data"],
+          points: [
+            "HIPAA requires disclosing only the minimum amount of PHI necessary for the stated purpose.",
+            "A sensitivity label alone does not enforce minimum-necessary compliance \u2014 supplement with access scoping and DLP.",
+            "Role-based groups (e.g., treating-clinician vs. billing) should be configured alongside label application.",
+            "De-identified data under 45 CFR \u00a7164.514 may drop to General; confirm de-identification method before downgrading."
+          ]
+        },
+        {
+          title: "PCI-DSS scope and cardholder data",
+          industries: ["financial", "retail"],
+          dataTypes: ["payment_data"],
+          points: [
+            "Files containing raw Primary Account Numbers (PANs) must be encrypted at rest \u2014 a label marking alone does not satisfy PCI-DSS.",
+            "Confidential \ All Employees is the minimum for internal payment files; use Highly Confidential \ All Employees if the file could enable fraudulent transactions.",
+            "Tokenized or truncated card data does not reduce the label requirement unless confirmed as fully de-identified by a PCI-qualified assessor."
+          ]
+        },
+        {
+          title: "Legal privilege and work-product doctrine",
+          industries: ["legal"],
+          dataTypes: ["legal_compliance", "incident_security"],
+          points: [
+            "Attorney-client privilege and work-product doctrine are separate from sensitivity labels.",
+            "Use Highly Confidential \ Specific People for materials where disclosure could inadvertently waive privilege.",
+            "Never share privileged documents via General or Confidential \ All Employees unless authorized by the responsible attorney."
+          ]
+        },
+        {
+          title: "Trade secret active-maintenance requirement",
+          industries: ["manufacturing", "legal", "retail"],
+          dataTypes: ["trade_secrets_ip"],
+          points: [
+            "Trade secret protection requires active steps to maintain confidentiality \u2014 a label alone is not legally sufficient.",
+            "Pair Highly Confidential \ All Employees with DLP block-external-sharing rules and regular access reviews.",
+            "Documents shared externally under NDA should use Confidential \ Specific People or Highly Confidential \ Specific People, not Highly Confidential \ All Employees."
+          ]
+        },
+        {
+          title: "Employee data and privacy regulations",
+          industries: null,
+          dataTypes: ["employee_hr"],
+          points: [
+            "Employee records are subject to GDPR, CCPA, and sector-specific HR regulations.",
+            "Highly Confidential \ All Employees is the floor for payroll, performance files, and HR investigations.",
+            "Use tightly scoped access groups rather than department-level broad sharing to limit exposure."
+          ]
+        },
+        {
+          title: "Incident response and legal hold",
+          industries: null,
+          dataTypes: ["incident_security"],
+          points: [
+            "Incident files and breach evidence frequently become subject to legal hold \u2014 do not downgrade labels on held files.",
+            "Highly Confidential \ Specific People is the appropriate label for breach evidence shared with legal, forensic, or regulatory parties.",
+            "Even post-remediation incident summaries should remain at Confidential \ All Employees or higher if they reference specific users, systems, or vulnerabilities."
+          ]
+        }
+      ],
+      industryExamples: {
+        healthcare: [
+          { dataTypes: null, title: "Healthcare \u2014 General Scenarios", items: [
+            "Referrals, treatment plans, and lab results kept internal \u2192 Confidential \ All Employees",
+            "PHI records fully internal \u2192 Highly Confidential \ All Employees",
+            "Regulator response packs or breach evidence needing external access \u2192 Highly Confidential \ Specific People"
+          ]},
+          { dataTypes: ["health_medical"], title: "PHI & Medical Records", items: [
+            "EHR export for internal audit review \u2192 Highly Confidential \ All Employees",
+            "Lab results shared with named referring physician \u2192 Confidential \ Specific People",
+            "De-identified population analytics for research \u2192 General",
+            "Imaging records accessed by specialist on named list \u2192 Confidential \ Specific People"
+          ]},
+          { dataTypes: ["payment_data"], title: "Healthcare Payment Data", items: [
+            "Co-pay and insurance remittance files \u2192 Confidential \ All Employees",
+            "Billing claim file sent to insurer \u2192 Confidential \ Specific People",
+            "Tokenized charge data used for internal analytics \u2192 General"
+          ]},
+          { dataTypes: ["personal_ids"], title: "Patient Identifiers", items: [
+            "Patient admission records with government ID \u2192 Confidential \ All Employees",
+            "Insurance member ID matching files \u2192 Confidential \ All Employees",
+            "Patient identity verification packs for insurer \u2192 Confidential \ Specific People"
+          ]},
+          { dataTypes: ["employee_hr"], title: "Healthcare HR & Staff Records", items: [
+            "Clinician credentialing and licensing files \u2192 Highly Confidential \ All Employees",
+            "Staff shift schedules (aggregate, no PII) \u2192 General",
+            "HR investigation file for clinical staff \u2192 Highly Confidential \ Specific People",
+            "Nurse payroll run \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["incident_security"], title: "Healthcare Security & Breach Response", items: [
+            "Breach notification to OCR / HHS \u2192 Highly Confidential \ Specific People",
+            "Internal incident timeline and log \u2192 Highly Confidential \ All Employees",
+            "Post-incident lessons-learned report (no PII) \u2192 Confidential \ All Employees",
+            "Forensic evidence shared with HIPAA legal counsel \u2192 Highly Confidential \ Specific People"
+          ]}
+        ],
+        financial: [
+          { dataTypes: null, title: "Financial Services \u2014 General Scenarios", items: [
+            "Non-public finance and internal case handling \u2192 Confidential \ All Employees",
+            "Loan, policy, and account onboarding packs shared with trusted parties \u2192 Confidential \ Specific People",
+            "Claims files or regulator evidence \u2192 Highly Confidential \ All Employees",
+            "Regulator responses requiring external access \u2192 Highly Confidential \ Specific People"
+          ]},
+          { dataTypes: ["payment_data"], title: "Payment & Card Data", items: [
+            "Card transaction dispute files \u2192 Confidential \ All Employees",
+            "Raw PAN records for PCI-DSS audit \u2192 Highly Confidential \ Specific People",
+            "Tokenized settlement reports \u2192 General",
+            "Fraud investigation files \u2192 Highly Confidential \ All Employees",
+            "Chargeback evidence shared with card network \u2192 Confidential \ Specific People"
+          ]},
+          { dataTypes: ["personal_ids"], title: "Customer Identity & KYC", items: [
+            "KYC / AML onboarding documents \u2192 Confidential \ All Employees",
+            "Client identity records shared with regulator \u2192 Highly Confidential \ Specific People",
+            "Anonymized credit-scoring models \u2192 General"
+          ]},
+          { dataTypes: ["tax_financial"], title: "Financial Statements & Board Materials", items: [
+            "Internal P&L, budget, and forecast files \u2192 Confidential \ All Employees",
+            "M&A materials under NDA shared with advisors \u2192 Highly Confidential \ Specific People",
+            "Audited financials submitted to regulator \u2192 Highly Confidential \ Specific People",
+            "Board financial pack \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["legal_compliance"], title: "Compliance & Regulatory Files", items: [
+            "Compliance investigation files \u2192 Highly Confidential \ All Employees",
+            "Suspicious Activity Reports (SARs) \u2192 Highly Confidential \ Specific People",
+            "Policy and procedure documents for staff training \u2192 General",
+            "Regulatory correspondence file \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["customer_loyalty"], title: "Customer & Account Data", items: [
+            "Customer account statements for internal review \u2192 Confidential \ All Employees",
+            "CRM segment exports shared with approved marketing agency \u2192 Confidential \ Specific People",
+            "Anonymized churn analysis \u2192 General"
+          ]},
+          { dataTypes: ["incident_security"], title: "Security & Breach Response", items: [
+            "Cyber breach evidence \u2192 Highly Confidential \ Specific People",
+            "Internal SOC incident runbook \u2192 Confidential \ All Employees",
+            "Customer breach notification draft \u2192 Confidential \ Specific People",
+            "Forensic investigation files \u2192 Highly Confidential \ All Employees"
+          ]}
+        ],
+        legal: [
+          { dataTypes: null, title: "Professional Services \u2014 General Scenarios", items: [
+            "Proposals and delivery plans \u2192 Confidential \ All Employees",
+            "Client intake and engagement workspace with named externals \u2192 Confidential \ Specific People",
+            "Privileged legal materials kept internal \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["legal_compliance"], title: "Privileged & Regulatory Documents", items: [
+            "Privileged memoranda and work-product documents \u2192 Highly Confidential \ All Employees",
+            "Court filings containing only public-record content \u2192 General",
+            "Regulatory submissions \u2192 Highly Confidential \ Specific People",
+            "Legal hold packages \u2192 Highly Confidential \ Specific People",
+            "Discovery production sets \u2192 Highly Confidential \ Specific People",
+            "Compliance audit files \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["personal_ids"], title: "Client Identity & Court Records", items: [
+            "Client KYC / identity verification documents \u2192 Confidential \ All Employees",
+            "Court orders referencing named individuals \u2192 Confidential \ Specific People",
+            "Witness statement files \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["partner_supplier"], title: "Third-Party & Vendor Engagements", items: [
+            "Third-party due diligence packs \u2192 Confidential \ Specific People",
+            "Vendor contracts under NDA \u2192 Confidential \ All Employees",
+            "Expert witness engagement agreements \u2192 Confidential \ Specific People"
+          ]},
+          { dataTypes: ["tax_financial"], title: "Client Financial & Trust Records", items: [
+            "Client trust account records \u2192 Highly Confidential \ All Employees",
+            "Billing rate sheets shared with named clients \u2192 Confidential \ Specific People",
+            "Internal firm P&L \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["incident_security"], title: "Incident & Legal Hold", items: [
+            "Legal hold evidence packages \u2192 Highly Confidential \ Specific People",
+            "Cyber incident affecting client data \u2192 Highly Confidential \ All Employees",
+            "Breach notification to bar association or regulator \u2192 Highly Confidential \ Specific People"
+          ]}
+        ],
+        retail: [
+          { dataTypes: null, title: "Retail & Consumer Goods \u2014 General Scenarios", items: [
+            "Aggregate retail reporting \u2192 General",
+            "Named customer service exports and joint business plans \u2192 Confidential \ All Employees",
+            "Distributor, broker, and agency collaboration packs \u2192 Confidential \ Specific People",
+            "Payroll, incident files, and recall packs \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["payment_data"], title: "Payment & Transaction Data", items: [
+            "POS transaction exports for internal analytics \u2192 Confidential \ All Employees",
+            "Chargeback dispute files sent to card network \u2192 Confidential \ Specific People",
+            "Raw card data for PCI audit \u2192 Highly Confidential \ Specific People",
+            "Tokenized purchase history for loyalty analytics \u2192 General"
+          ]},
+          { dataTypes: ["customer_loyalty"], title: "Customer & Loyalty Data", items: [
+            "Loyalty program member full exports \u2192 Confidential \ All Employees",
+            "CRM segments shared with marketing agency \u2192 Confidential \ Specific People",
+            "Anonymized basket-analysis datasets \u2192 General",
+            "Customer service case files \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["trade_secrets_ip"], title: "Product IP & Brand Strategy", items: [
+            "Seasonal product roadmaps \u2192 Confidential \ All Employees",
+            "Proprietary formulas or recipes \u2192 Highly Confidential \ All Employees",
+            "Brand strategy deck shared with ad agency under NDA \u2192 Confidential \ Specific People",
+            "Unannounced product specifications \u2192 Highly Confidential \ All Employees"
+          ]},
+          { dataTypes: ["employee_hr"], title: "HR & Workforce Data", items: [
+            "Store payroll run files \u2192 Highly Confidential \ All Employees",
+            "Staff scheduling exports (aggregate, no names) \u2192 General",
+            "HR investigation or disciplinary files \u2192 Highly Confidential \ Specific People",
+            "Onboarding packs with personal ID copies \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["partner_supplier"], title: "Supplier & Partner Collaboration", items: [
+            "Joint business plan with key retailer \u2192 Confidential \ Specific People",
+            "Supplier qualification and audit packs \u2192 Confidential \ All Employees",
+            "Co-manufacturing agreement under NDA \u2192 Confidential \ Specific People"
+          ]}
+        ],
+        manufacturing: [
+          { dataTypes: null, title: "Manufacturing & Engineering \u2014 General Scenarios", items: [
+            "CAD, BOMs, supplier contracts, and pricing kept internal \u2192 Confidential \ All Employees",
+            "Vendor due diligence and governed supplier exchange \u2192 Confidential \ Specific People",
+            "Trade secrets and formulations \u2192 Highly Confidential \ All Employees",
+            "QMS or safety-system exports where encryption breaks tooling \u2192 Highly Confidential \ Internal Exception"
+          ]},
+          { dataTypes: ["trade_secrets_ip"], title: "IP, CAD & Proprietary Designs", items: [
+            "3D CAD models and BOM files \u2192 Highly Confidential \ All Employees",
+            "Proprietary chemical formulations \u2192 Highly Confidential \ All Employees",
+            "Design drafts shared with OEM under NDA \u2192 Confidential \ Specific People",
+            "Process patents and innovation briefs \u2192 Highly Confidential \ All Employees",
+            "Pricing and cost models \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["partner_supplier"], title: "Supplier & Vendor Management", items: [
+            "Supplier qualification and due diligence packs \u2192 Confidential \ Specific People",
+            "Governed procurement and contract files \u2192 Confidential \ All Employees",
+            "Joint development agreements \u2192 Confidential \ Specific People",
+            "Inbound component spec sheets \u2192 Confidential \ All Employees"
+          ]},
+          { dataTypes: ["employee_hr"], title: "Workforce & HR Records", items: [
+            "Factory floor payroll files \u2192 Highly Confidential \ All Employees",
+            "Workforce planning data \u2192 Confidential \ All Employees",
+            "HR investigation files \u2192 Highly Confidential \ Specific People"
+          ]},
+          { dataTypes: ["tax_financial"], title: "Financial & Cost Records", items: [
+            "Internal cost tracking and project budgets \u2192 Confidential \ All Employees",
+            "Audited financials for board review \u2192 Highly Confidential \ All Employees",
+            "Transfer pricing documentation \u2192 Highly Confidential \ Specific People"
+          ]},
+          { dataTypes: ["incident_security"], title: "Safety & Security Incidents", items: [
+            "Production line incident reports \u2192 Confidential \ All Employees",
+            "Environmental and safety investigation files \u2192 Highly Confidential \ All Employees",
+            "OT / ICS breach evidence \u2192 Highly Confidential \ Specific People",
+            "Product recall pack \u2192 Highly Confidential \ Specific People"
+          ]}
+        ],
+        other: null
+      }
+    };
+
+    // ---- CONTEXT MAP ----
+    // Maps industry key -> relevant label keys, exception indices, and industryName (matches model.industries[n].name)
+    const contextMap = {
+      healthcare: {
+        labels: ["confidential_all", "confidential_specific", "hc_all", "hc_specific"],
+        exceptions: [0, 1, 2],
+        industryName: "Healthcare"
+      },
+      financial: {
+        labels: ["confidential_all", "confidential_specific", "hc_all", "hc_specific"],
+        exceptions: [0, 1, 2, 3],
+        industryName: "Financial services and insurance"
+      },
+      legal: {
+        labels: ["confidential_specific", "hc_all", "hc_specific"],
+        exceptions: [0, 1, 2, 3],
+        industryName: "Professional services"
+      },
+      retail: {
+        labels: ["general", "confidential_all", "confidential_specific", "hc_all"],
+        exceptions: [0, 1],
+        industryName: "Retail and consumer goods"
+      },
+      manufacturing: {
+        labels: ["confidential_all", "confidential_specific", "hc_all", "hc_exception"],
+        exceptions: [0, 1, 2],
+        industryName: "Manufacturing and engineering"
+      },
+      other: {
+        labels: null,
+        exceptions: null,
+        industryName: null
+      }
+    };
+
+    // Data type checkboxes -> label keys they implicate
+    const dataTypeLabels = {
+      payment_data: ["confidential_all"],
+      health_medical: ["hc_all"],
+      employee_hr: ["hc_all"],
+      trade_secrets_ip: ["hc_all"],
+      incident_security: ["hc_specific", "hc_all"],
+      partner_supplier: ["confidential_specific"]
+    };
+
+    // Data type checkbox options (rendered into the context panel)
+    const dataTypeOptions = [
+      { key: "personal_ids",      label: "Personal Identifiers (SSN, Government ID, Passport)" },
+      { key: "payment_data",      label: "Payment Data (Credit/debit cards, Bank accounts, IBAN/SWIFT)" },
+      { key: "health_medical",    label: "Health & Medical Information (Medical records, Member IDs, Lab results)" },
+      { key: "tax_financial",     label: "Tax & Financial Records (Tax IDs, Financial statements)" },
+      { key: "legal_compliance",  label: "Legal & Compliance Documents (Case files, Legal holds, Regulatory filings)" },
+      { key: "customer_loyalty",  label: "Customer & Loyalty Data (Customer records, Loyalty IDs, CRM exports)" },
+      { key: "employee_hr",       label: "Employee & HR Records (Payroll, HR files, Employee IDs)" },
+      { key: "trade_secrets_ip",  label: "Trade Secrets & IP (Designs, CAD/BOMs, Pricing, Formulations)" },
+      { key: "partner_supplier",  label: "Partner & Supplier Data (Contracts, Due diligence packs)" },
+      { key: "incident_security", label: "Incident & Security Data (Breach data, Investigation files)" },
+      { key: "other_data",         label: "Other / Unknown Data Types" }
+    ];
+
+    // Maps each industry to the subset of dataTypeOptions keys to show
+    const industryDataTypes = {
+      healthcare:    ["personal_ids", "health_medical", "payment_data", "employee_hr", "incident_security", "other_data"],
+      financial:     ["personal_ids", "payment_data", "tax_financial", "legal_compliance", "customer_loyalty", "employee_hr", "incident_security", "other_data"],
+      legal:         ["personal_ids", "tax_financial", "legal_compliance", "partner_supplier", "incident_security", "other_data"],
+      retail:        ["payment_data", "customer_loyalty", "employee_hr", "trade_secrets_ip", "partner_supplier", "other_data"],
+      manufacturing: ["tax_financial", "trade_secrets_ip", "partner_supplier", "employee_hr", "incident_security", "other_data"],
+      other:         ["personal_ids", "payment_data", "health_medical", "tax_financial", "legal_compliance", "customer_loyalty", "employee_hr", "trade_secrets_ip", "partner_supplier", "incident_security", "other_data"]
+    };
+    function isRegulationSuggested(reg, industryKey, selectedDTs) {
+      var s = reg.autoSuggest;
+      var indPass = !s.industries || (industryKey && s.industries.indexOf(industryKey) !== -1);
+      if (!indPass) return false;
+      if (!s.dataTypes) return true;
+      for (var i = 0; i < selectedDTs.length; i++) {
+        if (s.dataTypes.indexOf(selectedDTs[i]) !== -1) return true;
+      }
+      return false;
+    }
+
+    function renderRegulationCheckboxes(industryKey, selectedDTs) {
+      var grid = document.getElementById("regGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      if (!industryKey) {
+        var ph = document.createElement("p");
+        ph.className = "subtle";
+        ph.id = "regGridPlaceholder";
+        ph.style.cssText = "margin:0;font-size:13px;";
+        ph.textContent = "Select an industry and data types above to see suggested regulations.";
+        grid.appendChild(ph);
+        return;
+      }
+      regulationDefs.forEach(function(reg) {
+        var suggested = isRegulationSuggested(reg, industryKey, selectedDTs);
+        var lbl = document.createElement("label");
+        lbl.className = "checkbox-item";
+        lbl.setAttribute("for", "reg_" + reg.key);
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "reg-checkbox";
+        cb.value = reg.key;
+        cb.id = "reg_" + reg.key;
+        cb.checked = suggested;
+        var span = document.createElement("span");
+        span.textContent = reg.label;
+        if (suggested) {
+          var badge = document.createElement("span");
+          badge.className = "reg-suggested";
+          badge.textContent = "suggested";
+          span.appendChild(badge);
+        }
+        lbl.appendChild(cb);
+        lbl.appendChild(span);
+        grid.appendChild(lbl);
+      });
+    }
+
+    function renderDataTypeCheckboxes(industryKey) {
+      var grid = document.getElementById("dataTypeGrid");
+      grid.innerHTML = "";
+      if (!industryKey) {
+        var ph = document.createElement("p");
+        ph.className = "subtle";
+        ph.style.cssText = "margin:0;font-size:13px;";
+        ph.textContent = "Select an industry above to see relevant data types.";
+        grid.appendChild(ph);
+        return;
+      }
+      var allowed = industryDataTypes[industryKey] || dataTypeOptions.map(function(o) { return o.key; });
+      var filtered = dataTypeOptions.filter(function(o) { return allowed.indexOf(o.key) !== -1; });
+      filtered.forEach(function(opt) {
+        var lbl = document.createElement("label");
+        lbl.className = "checkbox-item";
+        lbl.setAttribute("for", "dt_" + opt.key);
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "dt-checkbox";
+        cb.value = opt.key;
+        cb.id = "dt_" + opt.key;
+        var span = document.createElement("span");
+        span.textContent = opt.label;
+        lbl.appendChild(cb);
+        lbl.appendChild(span);
+        grid.appendChild(lbl);
+        cb.addEventListener("change", function() {
+          var indVal = document.getElementById("industrySelect").value;
+          var currentDTs = Array.from(document.querySelectorAll(".dt-checkbox:checked")).map(function(c) { return c.value; });
+          renderRegulationCheckboxes(indVal, currentDTs);
+        });
+      });
+    }
+
+    // Human-readable industry labels
+    // ---- REGULATIONS ----
+    const regulationDefs = [
+      {
+        key: "hipaa",
+        label: "HIPAA (US Health)",
+        autoSuggest: { industries: ["healthcare"], dataTypes: ["health_medical", "personal_ids", "payment_data"] }
+      },
+      {
+        key: "pci_dss",
+        label: "PCI-DSS (Payment Cards)",
+        autoSuggest: { industries: ["financial", "retail"], dataTypes: ["payment_data"] }
+      },
+      {
+        key: "gdpr",
+        label: "GDPR (EU Personal Data)",
+        autoSuggest: { industries: null, dataTypes: ["personal_ids", "employee_hr", "health_medical"] }
+      },
+      {
+        key: "ccpa",
+        label: "CCPA (CA Consumer Privacy)",
+        autoSuggest: { industries: null, dataTypes: ["personal_ids", "customer_loyalty"] }
+      },
+      {
+        key: "sox",
+        label: "SOX (US Financial Reporting)",
+        autoSuggest: { industries: ["financial"], dataTypes: ["tax_financial"] }
+      },
+      {
+        key: "glba",
+        label: "GLBA (US Financial Privacy)",
+        autoSuggest: { industries: ["financial"], dataTypes: ["personal_ids", "tax_financial", "payment_data"] }
+      },
+      {
+        key: "itar_ear",
+        label: "ITAR / EAR (Export Control)",
+        autoSuggest: { industries: ["manufacturing"], dataTypes: ["trade_secrets_ip"] }
+      },
+      // ---- EU / UK ----
+      {
+        key: "dora",
+        label: "DORA (EU Digital Resilience)",
+        autoSuggest: { industries: ["financial"], dataTypes: ["incident_security", "tax_financial", "legal_compliance"] }
+      },
+      {
+        key: "nis2",
+        label: "NIS2 (EU Cyber Resilience)",
+        autoSuggest: { industries: ["manufacturing", "healthcare"], dataTypes: ["incident_security", "trade_secrets_ip", "partner_supplier"] }
+      },
+      {
+        key: "uk_gdpr",
+        label: "UK GDPR / DPA 2018",
+        autoSuggest: { industries: null, dataTypes: ["personal_ids", "health_medical", "employee_hr", "customer_loyalty"] }
+      },
+      // ---- Canada ----
+      {
+        key: "pipeda",
+        label: "PIPEDA / Quebec Law 25 (Canada)",
+        autoSuggest: { industries: ["healthcare", "financial", "retail", "legal"], dataTypes: ["personal_ids", "health_medical", "payment_data", "employee_hr"] }
+      },
+      // ---- Global / Other ----
+      {
+        key: "lgpd",
+        label: "LGPD (Brazil)",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "customer_loyalty", "payment_data", "health_medical"] }
+      },
+      {
+        key: "apra_cps234",
+        label: "APRA CPS 234 (Australia Finance)",
+        autoSuggest: { industries: ["other", "financial"], dataTypes: ["incident_security", "tax_financial", "payment_data"] }
+      },
+      {
+        key: "dpdp",
+        label: "DPDP Act / CERT-In (India)",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "health_medical", "payment_data", "employee_hr"] }
+      },
+      {
+        key: "pdpa_sg",
+        label: "PDPA (Singapore)",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "customer_loyalty", "payment_data", "health_medical"] }
+      },
+      {
+        key: "pipa_kr",
+        label: "PIPA (South Korea)",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "health_medical", "payment_data", "customer_loyalty"] }
+      },
+      {
+        key: "appi_jp",
+        label: "APPI (Japan)",
+        autoSuggest: { industries: ["other", "manufacturing"], dataTypes: ["personal_ids", "employee_hr", "customer_loyalty"] }
+      },
+      {
+        key: "gulf_pdpl",
+        label: "Gulf PDPL (UAE / Saudi Arabia)",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "health_medical", "payment_data", "tax_financial"] }
+      },
+      {
+        key: "nz_privacy",
+        label: "NZ Privacy Act 2020",
+        autoSuggest: { industries: ["other"], dataTypes: ["personal_ids", "customer_loyalty", "health_medical"] }
+      }
+    ];
+
+    const regulationNotes = {
+      hipaa: {
+        general:               "HIPAA: Confirm data is fully de-identified under 45 CFR §164.514 before assigning General.",
+        confidential_all:      "HIPAA: Minimum-necessary rule applies — scope access groups to treating clinicians or relevant staff only.",
+        confidential_specific: "HIPAA: PHI shared with named parties — verify BAAs or TPAs are in place for all external recipients.",
+        confidential_exception:"HIPAA: Exception path — document PHI exception and confirm minimum-necessary access controls are in place.",
+        hc_all:                "HIPAA: PHI at highest sensitivity — configure role-based access groups; enable audit logging.",
+        hc_specific:           "HIPAA: Breach evidence or regulator submissions — document disclosure purpose and retain access log for OCR.",
+        hc_exception:          "HIPAA: HC exception with PHI — IT sign-off must confirm encryption break does not expose PHI externally."
+      },
+      pci_dss: {
+        general:               "PCI-DSS: Confirm cardholder data is fully tokenized or de-identified before assigning General.",
+        confidential_all:      "PCI-DSS: Internal cardholder data — label encryption supports PCI scope; verify DLP blocks unmanaged device access.",
+        confidential_specific: "PCI-DSS: Payment data shared with named parties — confirm recipient is a PCI-compliant service provider.",
+        hc_all:                "PCI-DSS: High-risk payment data — DLP must block unmanaged access; review PCI scope quarterly.",
+        hc_specific:           "PCI-DSS: Audit or QSA evidence — confirm authorized assessor is on the named-access list."
+      },
+      gdpr: {
+        general:               "GDPR: Confirm data is anonymized (not merely pseudonymized) before assigning General.",
+        confidential_all:      "GDPR: Personal data — document lawful basis (Article 6/9); honor data subject rights requests.",
+        confidential_specific: "GDPR: Personal data shared with processors — verify a Data Processing Agreement covers all external recipients.",
+        confidential_exception:"GDPR: Exception path with personal data — document processing basis; confirm no cross-border transfer without adequate safeguards.",
+        hc_all:                "GDPR: Special-category data (health, biometric, criminal) — Article 9 basis required; notify DPA for breaches within 72 hours.",
+        hc_specific:           "GDPR: High-risk disclosure — confirm legal basis and log under Article 30 records of processing activities.",
+        hc_exception:          "GDPR: HC exception with special-category data — DPA notification obligations still apply; document IT sign-off."
+      },
+      ccpa: {
+        general:               "CCPA: Confirm data is fully de-identified or aggregated per CCPA standards before assigning General.",
+        confidential_all:      "CCPA: Consumer personal information — honor deletion and opt-out requests; maintain data inventory.",
+        confidential_specific: "CCPA: Data shared with service providers — ensure a CCPA-compliant service provider agreement is in place.",
+        hc_all:                "CCPA: Sensitive personal information (SPI) — additional opt-out obligations apply; consumers have right to limit use.",
+        hc_specific:           "CCPA: SPI shared externally — verify written agreement covers CCPA SPI restrictions."
+      },
+      sox: {
+        confidential_all:      "SOX: Financial records — ensure audit trail and access controls satisfy IT General Controls requirements.",
+        confidential_specific: "SOX: Financial data shared with auditors — document disclosure and retain for audit file.",
+        hc_all:                "SOX: Pre-disclosure or board financial data — restrict access strictly; log all access for auditor review.",
+        hc_specific:           "SOX: Auditor or SEC disclosures — document under Section 302/906 certification obligations."
+      },
+      glba: {
+        confidential_all:      "GLBA: Non-public personal financial information (NPFI) — Safeguards Rule requires encryption; label supports technical control.",
+        confidential_specific: "GLBA: NPFI shared with service providers — verify a written information security agreement is in place.",
+        hc_all:                "GLBA: High-sensitivity NPFI — confirm need-to-know access limits; incident response plan must cover NPFI breaches.",
+        hc_specific:           "GLBA: NPFI shared with regulators or auditors — document disclosure and retain access record."
+      },
+      itar_ear: {
+        general:               "ITAR/EAR: Confirm data contains no controlled technical information before assigning General.",
+        confidential_all:      "ITAR/EAR: Controlled technical data — verify all internal recipients are US persons or hold valid authorization.",
+        confidential_specific: "ITAR/EAR: Controlled data shared externally — export license or applicable exception must be documented prior to sharing.",
+        hc_all:                "ITAR/EAR: ITAR-controlled technical data — foreign national access restrictions apply even internally; citizenship/visa checks required.",
+        hc_specific:           "ITAR/EAR: Controlled technology shared with named parties — export license required; maintain disclosure records per EAR/ITAR Part 130."
+      },
+      dora: {
+        confidential_all:      "DORA: ICT operational data — label encryption supports audit trail requirements for digital resilience under Articles 8–14.",
+        confidential_specific: "DORA: Operational data shared with ICT third-party providers — contractual clauses covering resilience, access, and exit rights are required (Article 30).",
+        hc_all:                "DORA: Critical ICT incident documentation — maintain label integrity for evidence; notify competent authority of major incidents within 4 hours (Article 19).",
+        hc_specific:           "DORA: Major incident reports or regulatory submissions — log disclosure purpose under Articles 19–20; retain named-access records.",
+        legal_compliance:      "DORA: Compliance and ICT risk documentation — label supports policy and procedure classification required by Chapter II."
+      },
+      nis2: {
+        confidential_all:      "NIS2: Essential/important entity security records — label controls support audit readiness under Article 21 security measures.",
+        confidential_specific: "NIS2: Operational data shared with supply-chain partners — Article 21(2)(d) requires proportionate security measures for third-party access; document controls.",
+        hc_all:                "NIS2: Significant cyber incident evidence — mandatory reporting to CSIRT/competent authority within 24 hours of awareness (Article 23).",
+        hc_specific:           "NIS2: Incident notification to authority or affected parties — retain disclosure records; use named-access controls for regulatory submissions.",
+        incident_security:     "NIS2: Article 23 sets a 3-step reporting timeline — early warning (24 h), incident notification (72 h), final report (1 month)."
+      },
+      uk_gdpr: {
+        general:               "UK GDPR: Confirm data is anonymized (not pseudonymized) before assigning General; pseudonymized data remains personal data under the DPA 2018.",
+        confidential_all:      "UK GDPR: Personal data — document lawful basis under Article 6/9 (UK GDPR); honor data subject rights under the DPA 2018.",
+        confidential_specific: "UK GDPR: Personal data shared with processors — verify an Article 28 UK GDPR Data Processing Agreement covers all external recipients.",
+        confidential_exception:"UK GDPR: Exception path — document processing basis; confirm no UK-to-third-country transfer without adequate safeguards or ICO-approved mechanism.",
+        hc_all:                "UK GDPR: Special-category data — enhanced lawful basis required; notify ICO of breaches within 72 hours.",
+        hc_specific:           "UK GDPR: High-risk personal data disclosed externally — log under Article 30 UK GDPR records of processing; confirm legal basis and ICO notification if threshold met.",
+        hc_exception:          "UK GDPR: HC exception with special-category data — ICO notification obligations still apply; document IT sign-off."
+      },
+      pipeda: {
+        general:               "PIPEDA: Confirm data is fully de-identified before assigning General; pseudonymized data still requires protection under Canada's privacy principles.",
+        confidential_all:      "PIPEDA: Personal information — obtain meaningful consent; document retention and disposal procedures. Quebec Law 25 requires explicit opt-in consent.",
+        confidential_specific: "PIPEDA: Personal data shared with third parties — ensure contractual obligations equivalent to PIPEDA Schedule 1 are in place. Quebec Law 25 requires explicit consent for out-of-province or cross-border transfers.",
+        hc_all:                "PIPEDA: Sensitive personal information — report breaches posing significant risk of harm to OPC; notify affected individuals without unreasonable delay.",
+        hc_specific:           "PIPEDA: Sensitive data disclosed to external parties — document disclosure under PIPEDA Principle 4.1 accountability; retain records for OPC inspection."
+      },
+      lgpd: {
+        general:               "LGPD: Confirm data is anonymized per Article 12 before assigning General; pseudonymized data may still qualify as personal data under ANPD guidance.",
+        confidential_all:      "LGPD: Personal data of Brazilian data subjects — document lawful basis (Article 7); implement ANPD breach reporting obligations.",
+        confidential_specific: "LGPD: Personal data shared with operators — verify a data processing agreement under LGPD Article 37 is in place before sharing.",
+        hc_all:                "LGPD: Sensitive personal data (health, biometric, financial, racial origin) — requires explicit consent or specific legal basis under Article 11.",
+        hc_specific:           "LGPD: Sensitive data shared with authorized parties — notify ANPD and data subjects of incidents likely to cause risk or damage; log under Article 38."
+      },
+      apra_cps234: {
+        confidential_all:      "APRA CPS 234: Regulated information assets — label supports classification requirements; notify APRA of material ICT incidents within 72 hours.",
+        confidential_specific: "APRA CPS 234: Financial data shared with third parties — APRA-regulated entities must ensure third-party security capability meets CPS 234 Paragraph 15.",
+        hc_all:                "APRA CPS 234: Critical information assets — document recovery capability testing and access controls; material incident notification to APRA is mandatory without undue delay.",
+        hc_specific:           "APRA CPS 234: Incident or audit evidence shared with APRA or auditors — retain access logs; all material incidents must be reported promptly."
+      },
+      dpdp: {
+        general:               "DPDP Act (India): Confirm data is anonymized before assigning General; the Act applies to digital personal data processed in India.",
+        confidential_all:      "DPDP Act: Personal data — document consent or legitimate use; data fiduciaries must implement reasonable security safeguards. CERT-In: report cyber incidents within 6 hours of detection.",
+        confidential_specific: "DPDP Act: Data shared with data processors — ensure processing agreement per Section 8; RBI cyber controls apply to payment and financial data.",
+        hc_all:                "DPDP Act: Sensitive personal data — notify Data Protection Board and affected data principals of significant breaches; CERT-In mandatory reporting applies.",
+        hc_specific:           "DPDP Act: High-risk disclosure — document consent evidence; Board notification and individual notice required for personal data breaches meeting the threshold."
+      },
+      pdpa_sg: {
+        general:               "PDPA (Singapore): Confirm data is anonymized before assigning General; the PDPA applies to personal data collected, used, or disclosed in Singapore.",
+        confidential_all:      "PDPA: Personal data — document consent or applicable legitimate interest; notify PDPC of notifiable data breaches within 3 calendar days.",
+        confidential_specific: "PDPA: Data shared with data intermediaries — ensure contractual data protection obligations equivalent to PDPA are in place before disclosure.",
+        hc_all:                "PDPA: Sensitive data — PDPC notification mandatory for breaches affecting 500+ individuals or causing significant harm; notify affected individuals concurrently.",
+        hc_specific:           "PDPA: High-risk data disclosed to named external parties — document consent or legitimate business purpose; retain disclosure records for PDPC audit."
+      },
+      pipa_kr: {
+        general:               "PIPA (South Korea): Confirm data is anonymized before assigning General; pseudonymized data requires separate safeguards under PIPA Article 28-2.",
+        confidential_all:      "PIPA: Personal information — notify PIPC within 72 hours of breach awareness; maintain data processing records under Article 30.",
+        confidential_specific: "PIPA: Personal data shared with third parties — written consent or statutory exception required under Article 17; document transfer basis.",
+        hc_all:                "PIPA: Sensitive information (health, biometric, criminal history) — special consent requirements under Article 23; significantly higher penalties apply.",
+        hc_specific:           "PIPA: Sensitive data disclosed externally — PIPC notification and individual notice required; retain detailed disclosure records."
+      },
+      appi_jp: {
+        general:               "APPI (Japan): Confirm data is anonymized under APPI standards before assigning General; pseudonymized personal information requires separate handling.",
+        confidential_all:      "APPI: Personal information — report breaches of 100+ records to PPC within 30 days; notify affected individuals promptly.",
+        confidential_specific: "APPI: Data provided to third parties — document consent or applicable exception; cross-border transfers require adequate safeguards, consent, or whitelist-country transfer.",
+        hc_all:                "APPI: Special care-required personal information (health, criminal record, disability) — explicit opt-in consent required for collection and third-party provision.",
+        hc_specific:           "APPI: Sensitive data shared externally — opt-in consent required; PPC breach notification mandatory; retain transfer records."
+      },
+      gulf_pdpl: {
+        general:               "Gulf PDPL (UAE/Saudi Arabia): Confirm data is anonymized before assigning General; both UAE and Saudi PDPL apply to personal data processed within their jurisdictions.",
+        confidential_all:      "Gulf PDPL: Personal data — document legal basis (consent or legitimate interest); cross-border transfers require UAE DIFC/ADGM adequacy or Saudi NDMO approval.",
+        confidential_specific: "Gulf PDPL: Data shared with processors — data processing agreements are required; transfers outside GCC require appropriate safeguards.",
+        hc_all:                "Gulf PDPL: Sensitive personal data (health, financial, biometric, criminal) — heightened requirements apply; breach notification to regulator within 72 hours.",
+        hc_specific:           "Gulf PDPL: High-risk disclosure to named parties — document legal basis; retain access records for UAE DIFC/ADGM or Saudi PDPC regulator audit."
+      },
+      nz_privacy: {
+        general:               "NZ Privacy Act 2020: Confirm data is anonymized before assigning General; de-identified data that can be re-identified remains personal information.",
+        confidential_all:      "NZ Privacy Act: Personal information — Privacy Principles 1–12 apply; notify OPC of notifiable privacy breaches within 72 hours of becoming aware.",
+        confidential_specific: "NZ Privacy Act: Data shared with agencies or overseas parties — Principle 12 requires comparable privacy safeguards before offshore disclosure.",
+        hc_all:                "NZ Privacy Act: Sensitive data — breaches likely to cause serious harm must be notified to OPC and affected individuals without undue delay.",
+        hc_specific:           "NZ Privacy Act: Data disclosed externally — document Principle 12 safeguards for any overseas transfer; retain disclosure records for OPC review."
+      }
+    };
+
+    const industryDisplayLabels = {
+      healthcare:    "Healthcare / Clinics",
+      financial:     "Financial Services & Insurance",
+      legal:         "Legal & Accounting",
+      retail:        "Retail & eCommerce",
+      manufacturing: "Manufacturing & Distribution",
+      other:         "Other"
+    };
+
+    // ---- STATE ----
+    const state = {
+      currentQuestionId: "q1",
+      history: [],
+      resultKey: null,
+      rationale: "",
+      sessionLog: [],
+      hiddenLabelKeys: [],
+      visibleLabelKeys: [],
+      context: {
+        industry: null,
+        industryLabel: null,
+        dataTypes: [],
+        regulations: [],
+        locked: false
+      }
+    };
+
+    // ---- DOM REFS ----
+    const questionEl            = document.getElementById("question");
+    const resultEl              = document.getElementById("result");
+    const themeToggleButtonEl   = document.getElementById("themeToggleButton");
+    const closeTreeButtonEl     = document.getElementById("closeTreeButton");
+    const treePanelEl           = document.getElementById("treePanel");
+    const treeDiagramEl         = document.getElementById("treeDiagram");
+    const treeZoomInBtnEl       = document.getElementById("treeZoomInBtn");
+    const treeZoomOutBtnEl      = document.getElementById("treeZoomOutBtn");
+    const treeFitWidthBtnEl     = document.getElementById("treeFitWidthBtn");
+    const labelCardsEl          = document.getElementById("labelCards");
+    const exceptionCardsEl      = document.getElementById("exceptionCards");
+    const industryCardsEl       = document.getElementById("industryCards");
+    const announcerEl           = document.getElementById("announcer");
+    const contextPanelEl        = document.getElementById("contextPanel");
+    const mainGridEl            = document.getElementById("mainGrid");
+    const changeContextRowEl    = document.getElementById("changeContextRow");
+    const changeContextBtnEl    = document.getElementById("changeContextBtn");
+    const filterChipRowEl       = document.getElementById("filterChipRow");
+    const exportBarEl           = document.getElementById("exportBar");
+    var   editLabelsBtnEl       = null;
+    var   restoreAllBtnEl       = null;
+    var   editModeActive        = false;
+    const themeMediaQuery       = window.matchMedia("(prefers-color-scheme: dark)");
+
+    let themePreference = localStorage.getItem("labelTreeTheme") || "auto";
+
+    // ---- ACCESSIBILITY ANNOUNCER ----
+    function announce(message) {
+      announcerEl.textContent = "";
+      window.setTimeout(function() {
+        announcerEl.textContent = message;
+      }, 0);
+    }
+
+    // ---- THEME ----
+    function getResolvedTheme() {
+      if (themePreference === "auto") {
+        return themeMediaQuery.matches ? "dark" : "light";
+      }
+      return themePreference;
+    }
+
+    function updateThemeToggleLabel() {
+      const resolvedTheme = getResolvedTheme();
+      const label = themePreference === "auto"
+        ? "Theme: Auto (" + resolvedTheme.charAt(0).toUpperCase() + resolvedTheme.slice(1) + ")"
+        : "Theme: " + themePreference.charAt(0).toUpperCase() + themePreference.slice(1);
+      themeToggleButtonEl.textContent = label;
+      themeToggleButtonEl.setAttribute("aria-label", label + ". Activate to switch theme.");
+    }
+
+    function applyThemePreference(preference, shouldAnnounce) {
+      themePreference = preference;
+      if (preference === "auto") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", preference);
+      }
+      localStorage.setItem("labelTreeTheme", preference);
+      updateThemeToggleLabel();
+      if (shouldAnnounce) {
+        announce("Theme changed to " + themeToggleButtonEl.textContent.replace("Theme: ", "") + ".");
+      }
+    }
+
+    function cycleThemePreference() {
+      const order = ["auto", "light", "dark"];
+      const next = order[(order.indexOf(themePreference) + 1) % order.length];
+      applyThemePreference(next, true);
+    }
+
+    // ---- CONTEXT PANEL SETUP ----
+    function setupContextPanel() {
+      // Render placeholder (checkboxes populated after industry selection)
+      renderDataTypeCheckboxes("");
+      renderRegulationCheckboxes("", []);
+
+      // Industry select -> enable/disable start button + rebuild checkboxes
+      document.getElementById("industrySelect").addEventListener("change", function() {
+        document.getElementById("startFlowButton").disabled = !this.value;
+        renderDataTypeCheckboxes(this.value);
+        var currentDTs = Array.from(document.querySelectorAll(".dt-checkbox:checked")).map(function(cb) { return cb.value; });
+        renderRegulationCheckboxes(this.value, currentDTs);
+      });
+
+      // Start button
+      document.getElementById("startFlowButton").addEventListener("click", lockContext);
+
+      // Change context button
+      changeContextBtnEl.addEventListener("click", changeContext);
+    }
+
+    // ---- LOCK CONTEXT (Start button) ----
+    function lockContext() {
+      const industryVal = document.getElementById("industrySelect").value;
+      if (!industryVal) return;
+
+      state.context.industry     = industryVal;
+      state.context.industryLabel = industryDisplayLabels[industryVal] || industryVal;
+      state.context.dataTypes    = Array.from(
+        document.querySelectorAll(".dt-checkbox:checked")
+      ).map(function(cb) { return cb.value; });
+      state.context.regulations  = Array.from(
+        document.querySelectorAll(".reg-checkbox:checked")
+      ).map(function(cb) { return cb.value; });
+      state.context.locked = true;
+
+      // Hide context panel, show decision grid + content sections
+      contextPanelEl.hidden = false; // keep in DOM but hide
+      contextPanelEl.setAttribute("hidden", "");
+      mainGridEl.removeAttribute("hidden");
+      changeContextRowEl.removeAttribute("hidden");
+      document.getElementById("referenceSection").removeAttribute("hidden");
+      document.getElementById("exceptionsSection").removeAttribute("hidden");
+      document.getElementById("examplesSection").removeAttribute("hidden");
+
+      resetFlow(false);
+      renderAll();
+      announce("Context set to " + state.context.industryLabel + ". Answer the questions to get a label recommendation.");
+
+      // Focus the first question
+      window.setTimeout(function() { questionEl.focus(); }, 100);
+    }
+
+    // ---- CHANGE CONTEXT ----
+    function changeContext() {
+      if (state.sessionLog.length > 0) {
+        var noun = state.sessionLog.length === 1 ? "item" : "items";
+        if (!window.confirm("Changing context will clear the session log (" + state.sessionLog.length + " " + noun + "). Continue?")) {
+          return;
+        }
+        state.sessionLog = [];
+        state.hiddenLabelKeys = [];
+        editModeActive = false;
+      }
+      state.context.industry     = null;
+      state.context.industryLabel = null;
+      state.context.dataTypes    = [];
+      state.context.regulations  = [];
+      state.context.locked       = false;
+
+      // Show context panel, hide decision grid + content sections
+      contextPanelEl.removeAttribute("hidden");
+      mainGridEl.setAttribute("hidden", "");
+      changeContextRowEl.setAttribute("hidden", "");
+      document.getElementById("referenceSection").setAttribute("hidden", "");
+      document.getElementById("exceptionsSection").setAttribute("hidden", "");
+      document.getElementById("examplesSection").setAttribute("hidden", "");
+
+      resetFlow(false);
+      renderAll();
+      renderSectionsPlaceholder();
+      announce("Context cleared. Please select your industry to start.");
+
+      // Focus the industry select
+      window.setTimeout(function() {
+        document.getElementById("industrySelect").focus();
+      }, 100);
+    }
+
+    // ---- CONTEXT FILTERING HELPERS ----
+    function getRelevantLabelKeys() {
+      if (!state.context.locked || !state.context.industry || state.context.industry === "other") {
+        return Object.keys(model.labels);
+      }
+      const ctx = contextMap[state.context.industry];
+      var labelSet = new Set(ctx.labels || Object.keys(model.labels));
+
+      // Add labels implied by selected data types
+      state.context.dataTypes.forEach(function(dt) {
+        if (dataTypeLabels[dt]) {
+          dataTypeLabels[dt].forEach(function(lk) { labelSet.add(lk); });
+        }
+      });
+
+      // Always include the current result label
+      if (state.resultKey) {
+        labelSet.add(state.resultKey);
+      }
+
+      // Preserve original order
+      return Object.keys(model.labels).filter(function(k) { return labelSet.has(k); });
+    }
+
+    function getRelevantExceptionIndices() {
+      var sel = state.context;
+      return model.exceptions.reduce(function(acc, ex, i) {
+        var dtMatch = !ex.dataTypes || sel.dataTypes.some(function(d) { return ex.dataTypes.indexOf(d) !== -1; });
+        var indMatch = !ex.industries || !sel.industry || ex.industries.indexOf(sel.industry) !== -1;
+        if (dtMatch && indMatch) acc.push(i);
+        return acc;
+      }, []);
+    }
+
+    function getRelevantIndustries() {
+      var sel   = state.context;
+      var ind   = sel.industry || "other";
+      var cards = model.industryExamples[ind] || model.industryExamples.other;
+      if (!cards) {
+        // No industry selected or "other": aggregate one card per top-level industry
+        cards = [];
+        ["healthcare","financial","legal","retail","manufacturing"].forEach(function(key) {
+          var bucket = model.industryExamples[key];
+          if (bucket && bucket.length) cards.push(bucket[0]);
+        });
+      }
+      if (!sel.dataTypes || !sel.dataTypes.length) return cards;
+      var filtered = cards.filter(function(c) {
+        return !c.dataTypes || c.dataTypes.some(function(d) { return sel.dataTypes.indexOf(d) !== -1; });
+      });
+      return filtered.length ? filtered : cards;
+    }
+
+    // ---- PROGRESS ----
+    // ---- QUESTION ----
+    function renderQuestion() {
+      var question = model.questions[state.currentQuestionId];
+
+      if (!question) {
+        questionEl.innerHTML = "<p class=\"empty-state\">Decision flow complete.</p>";
+        return;
+      }
+
+      questionEl.innerHTML = "";
+
+      var title = document.createElement("h3");
+      title.id = "activeQuestionHeading";
+      title.textContent = question.text;
+
+      var help = document.createElement("p");
+      help.className = "question-help";
+      help.textContent = question.help;
+
+      var buttons = document.createElement("div");
+      buttons.className = "buttons";
+
+      var yesButton = document.createElement("button");
+      yesButton.className = "choice-yes";
+      yesButton.textContent = "Yes";
+      yesButton.addEventListener("click", function() { answerQuestion("yes"); });
+
+      var noButton = document.createElement("button");
+      noButton.className = "choice-no";
+      noButton.textContent = "No";
+      noButton.addEventListener("click", function() { answerQuestion("no"); });
+
+      var backButton = document.createElement("button");
+      backButton.className = "secondary";
+      backButton.textContent = "Back";
+      backButton.disabled = state.history.length === 0;
+      backButton.addEventListener("click", goBack);
+
+      var resetButton = document.createElement("button");
+      resetButton.className = "secondary";
+      resetButton.textContent = "Reset";
+      resetButton.addEventListener("click", function() { resetFlow(true); });
+
+      var visualizeButton = document.createElement("button");
+      visualizeButton.className = "secondary";
+      visualizeButton.textContent = "Visualize tree";
+      visualizeButton.addEventListener("click", openTreeVisualization);
+
+      buttons.appendChild(yesButton);
+      buttons.appendChild(noButton);
+      buttons.appendChild(backButton);
+      buttons.appendChild(resetButton);
+      buttons.appendChild(visualizeButton);
+
+      questionEl.appendChild(title);
+      questionEl.appendChild(help);
+      questionEl.appendChild(buttons);
+      questionEl.setAttribute("aria-labelledby", "activeQuestionHeading");
+    }
+
+    // ---- RESULT ----
+    function buildRegulationNotesBlock(labelKey) {
+      var regs = state.context.regulations;
+      if (!regs || regs.length === 0) return null;
+      var notes = [];
+      regs.forEach(function(regKey) {
+        var regNotes = regulationNotes[regKey];
+        if (regNotes && regNotes[labelKey]) {
+          notes.push(regNotes[labelKey]);
+        }
+      });
+      if (notes.length === 0) return null;
+      var block = document.createElement("div");
+      block.className = "reg-notes";
+      var title = document.createElement("p");
+      title.className = "reg-notes-title";
+      title.textContent = "Regulatory considerations";
+      var list = document.createElement("ul");
+      notes.forEach(function(note) {
+        var li = document.createElement("li");
+        li.textContent = note;
+        list.appendChild(li);
+      });
+      block.appendChild(title);
+      block.appendChild(list);
+      return block;
+    }
+
+    function renderResult() {
+      if (!state.resultKey) {
+        resultEl.innerHTML = "<p class=\"empty-state\">No label selected yet. Start with the first question to generate a recommendation.</p>";
+        return;
+      }
+
+      var label = model.labels[state.resultKey];
+      resultEl.innerHTML = "";
+
+      var badge = document.createElement("div");
+      badge.className = "label-badge";
+      badge.style.background = label.color;
+      badge.innerHTML = "<span class=\"dot\"></span>" + label.name;
+
+      var definition = document.createElement("p");
+      definition.className = "result-summary";
+      definition.innerHTML = "<strong>Why:</strong> " + state.rationale + " <br><strong>Definition:</strong> " + label.definition;
+
+      var baselineTitle = document.createElement("p");
+      baselineTitle.innerHTML = "<strong>Protection baseline</strong>";
+
+      var baselineList = document.createElement("ul");
+      baselineList.className = "detail-list";
+      label.baseline.forEach(function(item) {
+        var li = document.createElement("li");
+        li.textContent = item;
+        baselineList.appendChild(li);
+      });
+
+      var exampleTitle = document.createElement("p");
+      exampleTitle.innerHTML = "<strong>Common examples</strong>";
+      exampleTitle.style.marginTop = "14px";
+
+      var exampleList = document.createElement("ul");
+      exampleList.className = "detail-list";
+      label.examples.forEach(function(item) {
+        var li = document.createElement("li");
+        li.textContent = item;
+        exampleList.appendChild(li);
+      });
+
+      var toolbar = document.createElement("div");
+      toolbar.className = "toolbar";
+
+      var saveButton = document.createElement("button");
+      saveButton.className = "primary";
+      saveButton.textContent = "Save \u0026 label another";
+      saveButton.addEventListener("click", function() {
+        saveButton.disabled = true;
+        saveResult();
+      });
+
+      var copyButton = document.createElement("button");
+      copyButton.className = "secondary";
+      copyButton.textContent = "Copy summary";
+      copyButton.addEventListener("click", copySummary);
+
+      var resetButton = document.createElement("button");
+      resetButton.className = "secondary";
+      resetButton.textContent = "Start over";
+      resetButton.addEventListener("click", function() { resetFlow(true); });
+
+      toolbar.appendChild(saveButton);
+      toolbar.appendChild(copyButton);
+      toolbar.appendChild(resetButton);
+
+      resultEl.appendChild(badge);
+      resultEl.appendChild(definition);
+      resultEl.appendChild(baselineTitle);
+      resultEl.appendChild(baselineList);
+      resultEl.appendChild(exampleTitle);
+      resultEl.appendChild(exampleList);
+      var regBlock = buildRegulationNotesBlock(state.resultKey);
+      if (regBlock) { resultEl.appendChild(regBlock); }
+      resultEl.appendChild(toolbar);
+    }
+
+    // ---- ANSWER QUESTION ----
+    function answerQuestion(answer) {
+      var question = model.questions[state.currentQuestionId];
+      var branch = question[answer];
+
+      state.history.push({
+        questionId: state.currentQuestionId,
+        question: question.text,
+        answer: answer.toUpperCase()
+      });
+
+      if (branch.result) {
+        state.resultKey = branch.result;
+        state.rationale = branch.rationale;
+        state.currentQuestionId = null;
+      } else {
+        state.resultKey = null;
+        state.rationale = "";
+        state.currentQuestionId = branch.next;
+      }
+
+      renderAll();
+
+      // Scroll to recommendation card when questions are complete
+      if (state.resultKey) {
+        window.setTimeout(function() {
+          var resultSection = document.getElementById("result");
+          if (resultSection) {
+            resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          var card = labelCardsEl.querySelector("[data-label-key=\"" + state.resultKey + "\"]");
+          if (card) {
+            card.classList.remove("card-highlight");
+            void card.offsetWidth; // force reflow to restart animation
+            card.classList.add("card-highlight");
+          }
+        }, 350);
+      }
+    }
+
+    // ---- BACK ----
+    function goBack() {
+      if (!state.history.length) return;
+      var replay = state.history.slice(0, -1);
+      resetFlow(false);
+      replay.forEach(function(step) { answerQuestion(step.answer.toLowerCase()); });
+    }
+
+    // ---- RESET FLOW ----
+    function resetFlow(render) {
+      state.currentQuestionId = "q1";
+      state.history = [];
+      state.resultKey = null;
+      state.rationale = "";
+      if (render !== false) {
+        renderAll();
+      }
+    }
+
+    // ---- COPY SUMMARY ----
+    function copySummary() {
+      if (!state.resultKey) return;
+      var label = model.labels[state.resultKey];
+      var summary = [
+        "Recommended label: " + label.name,
+        "Why: " + state.rationale,
+        "Definition: " + label.definition,
+        "Protection baseline: " + label.baseline.join("; "),
+        "Common examples: " + label.examples.join("; ")
+      ].join("\n");
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary)
+          .then(function() { announce("Summary copied to clipboard."); })
+          .catch(function() { announce("Copy to clipboard was not completed."); });
+      }
+    }
+
+    // ---- SAVE RESULT ----
+    function saveResult() {
+      if (!state.resultKey) return;
+      var label = model.labels[state.resultKey];
+      state.sessionLog.push({
+        labelKey:    state.resultKey,
+        labelName:   label.name,
+        color:       label.color,
+        rationale:   state.rationale,
+        history:     state.history.map(function(s) {
+          return { questionId: s.questionId, question: s.question, answer: s.answer };
+        }),
+        regulations: state.context.regulations.slice()
+      });
+      resetFlow(false);
+      renderAll();
+      announce(label.name + " annotated in the reference section. Answer the next questions to label another item.");
+      window.setTimeout(function() { questionEl.focus(); }, 100);
+    }
+
+    // ---- TREE DIAGRAM ----
+    function renderTreeDiagram() {
+      function qNode(id) {
+        var q   = model.questions[id];
+        var cls = ["vd-node", "question"];
+        if (state.history.some(function(s) { return s.questionId === id; })) cls.push("visited");
+        if (state.currentQuestionId === id) cls.push("active");
+        return "<div class=\"" + cls.join(" ") + "\" data-node=\"" + id + "\">"
+          + "<span class=\"node-type\">Decision</span>"
+          + "<div class=\"node-title\">" + q.text + "</div>"
+          + "<div class=\"node-copy\">"  + q.help + "</div>"
+          + "</div>";
+      }
+      function rNode(key) {
+        var lbl = model.labels[key];
+        var cls = ["vd-node", "result"];
+        if (state.resultKey === key) cls.push("selected", "active");
+        return "<div class=\"" + cls.join(" ") + "\" data-result=\"" + key + "\" style=\"border-top-color:" + lbl.color + ";\">"
+          + "<span class=\"node-type\">Label</span>"
+          + "<div class=\"node-title\">" + lbl.name + "</div>"
+          + "<div class=\"node-copy\">"  + lbl.definition + "</div>"
+          + "</div>";
+      }
+      function grp(nodeHtml, rowHtml) {
+        if (!rowHtml) return "<div class=\"vd-group\">" + nodeHtml + "</div>";
+        return "<div class=\"vd-group\">" + nodeHtml + "<div class=\"vd-stem\"></div>" + rowHtml + "</div>";
+      }
+      function brn(label, chipCls, inner) {
+        return "<div class=\"vd-branch\">"
+          + "<div class=\"vd-stem short\"></div>"
+          + "<span class=\"branch-label " + chipCls + "\">" + label + "</span>"
+          + "<div class=\"vd-stem short\"></div>"
+          + inner
+          + "</div>";
+      }
+      function row() {
+        return "<div class=\"vd-row\">" + Array.prototype.slice.call(arguments).join("") + "</div>";
+      }
+
+      var q6hc   = grp(qNode("q6_hc"),
+                       row(brn("Yes \u2014 Exception", "yes", grp(rNode("hc_exception"))),
+                           brn("No",                  "no",  grp(rNode("hc_all")))));
+      var q6conf = grp(qNode("q6_conf"),
+                       row(brn("Yes \u2014 Exception", "yes", grp(rNode("confidential_exception"))),
+                           brn("No",                  "no",  grp(rNode("confidential_all")))));
+      var q5int  = grp(qNode("q5_internal"),
+                       row(brn("Yes \u2014 Highest Risk", "yes", q6hc),
+                           brn("No \u2014 Standard",      "no",  q6conf)));
+      var q5ext  = grp(qNode("q5_external"),
+                       row(brn("Yes \u2014 Highest Risk", "yes", grp(rNode("hc_specific"))),
+                           brn("No",                     "no",  grp(rNode("confidential_specific")))));
+      var q4     = grp(qNode("q4"),
+                       row(brn("Yes \u2014 Internal", "yes", q5int),
+                           brn("No \u2014 External",  "no",  q5ext)));
+      var q3     = grp(qNode("q3"),
+                       row(brn("No",                 "no",  grp(rNode("general"))),
+                           brn("Yes \u2014 Sensitive","yes", q4)));
+      var q2     = grp(qNode("q2"),
+                       row(brn("Yes",  "yes", grp(rNode("general"))),
+                           brn("No",   "no",  q3)));
+      var root   = grp(qNode("q1"),
+                       row(brn("Yes",  "yes", grp(rNode("public"))),
+                           brn("No",   "no",  q2)));
+
+      treeDiagramEl.innerHTML = "<div class=\"vd-root\">" + root + "</div>";
+    }
+
+    function syncFloatScrollbar() {
+      var d = treeDiagramEl;
+      var f = document.getElementById("treeDiagramScrollbar");
+      var i = document.getElementById("treeDiagramScrollbarInner");
+      if (!f || !i) return;
+      i.style.width = d.scrollWidth + "px";
+      var syncing = false;
+      d.onscroll = function() {
+        if (syncing) return; syncing = true;
+        f.scrollLeft = d.scrollLeft;
+        syncing = false;
+      };
+      f.onscroll = function() {
+        if (syncing) return; syncing = true;
+        d.scrollLeft = f.scrollLeft;
+        syncing = false;
+      };
+    }
+
+    function syncTreeAccessibility() {
+    }
+
+    function openTreeVisualization() {
+      treePanelEl.hidden = false;
+      renderTreeDiagram();
+      fitTreeToWidth();
+      syncFloatScrollbar();
+      syncTreeAccessibility();
+      treePanelEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      closeTreeButtonEl.focus();
+    }
+
+    function closeTreeVisualization() {
+      treePanelEl.hidden = true;
+    }
+
+    // ---- FILTER CHIP ----
+    function renderFilterChip() {
+      filterChipRowEl.innerHTML = "";
+      if (!state.context.locked || !state.context.industry) return;
+
+      var label = state.context.industryLabel;
+      if (state.context.dataTypes.length > 0) {
+        label += " + " + state.context.dataTypes.length + " data type" + (state.context.dataTypes.length !== 1 ? "s" : "");
+      }
+      if (state.context.regulations && state.context.regulations.length > 0) {
+        label += " + " + state.context.regulations.length + " regulation" + (state.context.regulations.length !== 1 ? "s" : "");
+      }
+
+      var chip = document.createElement("div");
+      chip.className = "filter-chip";
+      chip.setAttribute("role", "status");
+      chip.setAttribute("aria-label", "Filtered for: " + label + ". Activate button to clear filter.");
+
+      var chipText = document.createElement("span");
+      chipText.innerHTML = "Filtered for: <strong>" + label + "</strong>";
+
+      var clearBtn = document.createElement("button");
+      clearBtn.className = "filter-chip-clear";
+      clearBtn.setAttribute("aria-label", "Clear filter and show all labels");
+      clearBtn.textContent = "\u00d7";
+      clearBtn.addEventListener("click", changeContext);
+
+      chip.appendChild(chipText);
+      chip.appendChild(clearBtn);
+      filterChipRowEl.appendChild(chip);
+    }
+
+    // ---- REFERENCE CARDS ----
+    function renderSectionsPlaceholder() {
+      var msg = '<p class="empty-state" style="padding:8px 0;">Complete the context setup above to see relevant reference information.</p>';
+      labelCardsEl.innerHTML = msg;
+      exceptionCardsEl.innerHTML = msg;
+      industryCardsEl.innerHTML = msg;
+      filterChipRowEl.innerHTML = "";
+      document.getElementById("modelHeading").textContent = "8-label DEFEND-aligned model";
+      document.getElementById("exceptionsHeading").textContent = "Explicit clarifications to surface in the tree";
+      document.getElementById("examplesHeading").textContent = "Cross-industry scenarios to keep the tree inclusive";
+    }
+    function renderReferenceCards() {
+      if (!state.context.locked) { return; }
+      labelCardsEl.innerHTML = "";
+      var relevantKeys = getRelevantLabelKeys();
+
+      // Build a deduplicated map of session-saved labels (first save per key)
+      var savedByKey = {};
+      state.sessionLog.forEach(function(entry) {
+        if (!savedByKey[entry.labelKey]) {
+          savedByKey[entry.labelKey] = entry;
+        }
+      });
+
+      // Session keys not already in the filtered set — append in model order
+      var modelKeyOrder = Object.keys(model.labels);
+      var extraKeys = Object.keys(savedByKey).filter(function(k) {
+        return relevantKeys.indexOf(k) === -1;
+      }).sort(function(a, b) {
+        return modelKeyOrder.indexOf(a) - modelKeyOrder.indexOf(b);
+      });
+
+      var allKeys = relevantKeys.concat(extraKeys).sort(function(a, b) {
+        return modelKeyOrder.indexOf(a) - modelKeyOrder.indexOf(b);
+      });
+
+      // Filter out user-hidden labels
+      allKeys = allKeys.filter(function(k) {
+        return state.hiddenLabelKeys.indexOf(k) === -1;
+      });
+      state.visibleLabelKeys = allKeys.slice();
+
+      // Apply or remove edit-mode class
+      if (editModeActive) {
+        labelCardsEl.classList.add('reference-edit-mode');
+      } else {
+        labelCardsEl.classList.remove('reference-edit-mode');
+      }
+
+      allKeys.forEach(function(key) {
+        var label = model.labels[key];
+
+        var card = document.createElement("article");
+        card.className = "label-card";
+        card.dataset.labelKey = key;
+        card.style.borderTop = "4px solid " + label.color;
+
+        if (key === state.resultKey) {
+          card.classList.add("card-highlight");
+        }
+
+        card.innerHTML = "<h3>" + label.name + "</h3>"
+          + "<p>" + label.definition + "</p>"
+          + "<p class=\"subtle\"><strong>Baseline:</strong> " + label.baseline.join(", ") + "</p>";
+
+        var list = document.createElement("ul");
+        label.examples.forEach(function(item) {
+          var li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+        card.appendChild(list);
+        var regBlock = buildRegulationNotesBlock(key);
+        if (regBlock) { card.appendChild(regBlock); }
+
+        // Prepend annotation block for tool-labeled cards
+        if (savedByKey[key]) {
+          var entry = savedByKey[key];
+          var annotation = document.createElement("div");
+          annotation.className = "card-tool-annotation";
+
+          var annotLabel = document.createElement("p");
+          annotLabel.className = "card-tool-annotation-label";
+          annotLabel.textContent = "\u2713 Labeled by decision flow";
+
+          var annotRationale = document.createElement("p");
+          annotRationale.className = "card-tool-annotation-rationale";
+          annotRationale.textContent = entry.rationale;
+
+          var annotPath = document.createElement("p");
+          annotPath.className = "card-tool-annotation-path";
+          annotPath.textContent = "Path: " + entry.history.map(function(s) { return s.answer; }).join(" \u2192 ");
+
+          annotation.appendChild(annotLabel);
+          annotation.appendChild(annotRationale);
+          annotation.appendChild(annotPath);
+          card.insertBefore(annotation, card.firstChild);
+        }
+
+        labelCardsEl.appendChild(card);
+
+        // Remove button (visible in edit mode)
+        var removeBtn = document.createElement('button');
+        removeBtn.className = 'card-remove-btn';
+        removeBtn.type = 'button';
+        removeBtn.textContent = '\u00d7';
+        removeBtn.setAttribute('aria-label', 'Remove ' + label.name + ' from reference and exports');
+        removeBtn.addEventListener('click', (function(k) {
+          return function() {
+            state.hiddenLabelKeys.push(k);
+            renderAll();
+          };
+        })(key));
+        card.appendChild(removeBtn);
+      });
+
+      // Update section heading
+      var heading = document.getElementById("modelHeading");
+      if (state.context.locked && state.context.industry && state.context.industry !== "other") {
+        heading.textContent = "Relevant labels for " + state.context.industryLabel;
+      } else {
+        heading.textContent = "8-label DEFEND-aligned model";
+      }
+
+      // Update export/edit button states
+      if (editLabelsBtnEl) {
+        editLabelsBtnEl.textContent = editModeActive ? '\u2713 Done editing' : '\u270f Edit labels';
+        editLabelsBtnEl.classList.toggle('active', editModeActive);
+      }
+      if (restoreAllBtnEl) {
+        var numHidden = state.hiddenLabelKeys.length;
+        restoreAllBtnEl.hidden = numHidden === 0;
+        restoreAllBtnEl.textContent = 'Restore removed (' + numHidden + ')';
+      }
+
+      // Render filter chip
+      renderFilterChip();
+      applyDynamicColumns(labelCardsEl, allKeys.length, 4);
+    }
+
+    // ---- EXCEPTIONS ----
+    function renderExceptions() {
+      if (!state.context.locked) { return; }
+      exceptionCardsEl.innerHTML = "";
+      var relevantIndices = getRelevantExceptionIndices();
+
+      model.exceptions.forEach(function(exception, i) {
+        if (relevantIndices.indexOf(i) === -1) return;
+
+        var card = document.createElement("article");
+        card.className = "exception-card";
+        var title = document.createElement("h3");
+        title.textContent = exception.title;
+        var list = document.createElement("ul");
+
+        exception.points.forEach(function(point) {
+          var li = document.createElement("li");
+          li.textContent = point;
+          list.appendChild(li);
+        });
+
+        card.appendChild(title);
+        card.appendChild(list);
+        exceptionCardsEl.appendChild(card);
+      });
+      applyDynamicColumns(exceptionCardsEl, exceptionCardsEl.childElementCount, 3);
+    }
+
+    // ---- INDUSTRY EXAMPLES ----
+    function renderIndustries() {
+      if (!state.context.locked) { return; }
+      industryCardsEl.innerHTML = "";
+      var cards = getRelevantIndustries();
+      cards.forEach(function(card) {
+        var article = document.createElement("article");
+        article.className = "industry-card";
+        var h3 = document.createElement("h3");
+        h3.textContent = card.title;
+        var list = document.createElement("ul");
+        card.items.forEach(function(item) {
+          var li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+        article.appendChild(h3);
+        article.appendChild(list);
+        industryCardsEl.appendChild(article);
+      });
+      // Update examples heading
+      var heading = document.getElementById("examplesHeading");
+      var sel = state.context;
+      if (sel.locked && sel.industry && sel.industry !== "other") {
+        var dtCount = sel.dataTypes ? sel.dataTypes.length : 0;
+        heading.textContent = sel.industryLabel + " scenarios" + (dtCount ? " \u2014 filtered by data type" : "");
+      } else {
+        heading.textContent = "Cross-industry scenarios";
+      }
+      applyDynamicColumns(industryCardsEl, industryCardsEl.childElementCount, 4);
+    }
+
+    // ---- DYNAMIC COLUMN HELPER ----
+    function applyDynamicColumns(el, count, maxCols) {
+      if (!el) return;
+      if (count <= 0) { el.style.gridTemplateColumns = ""; return; }
+      var max = maxCols || 4;
+      var cols;
+      if (count <= max) {
+        cols = count;                              // fits in one row — no empty cells
+      } else {
+        var rows = Math.ceil(count / max);
+        cols = Math.ceil(count / rows);            // distribute evenly across rows
+      }
+      el.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
+    }
+
+    // ---- TREE ZOOM ----
+    var currentTreeZoom = 1;
+
+    function applyTreeZoom(scale) {
+      var inner = treeDiagramEl ? treeDiagramEl.querySelector(".vd-root") : null;
+      if (!inner) return;
+      currentTreeZoom = scale;
+      inner.style.zoom = String(scale);
+      var labelEl = document.getElementById("treeZoomLabel");
+      if (labelEl) labelEl.textContent = Math.round(scale * 100) + "%";
+      syncFloatScrollbar();
+    }
+
+    function fitTreeToWidth() {
+      var inner = treeDiagramEl ? treeDiagramEl.querySelector(".vd-root") : null;
+      if (!inner) return;
+      inner.style.zoom = "";
+      var containerW = (treeDiagramEl.clientWidth || 0) - 16;
+      var treeW = inner.offsetWidth;
+      if (!treeW || !containerW) return;
+      var scale = Math.max(0.5, Math.min(1.8, containerW / treeW));
+      applyTreeZoom(scale);
+    }
+
+    function treeZoomIn() {
+      applyTreeZoom(Math.min(2.0, Math.round((currentTreeZoom + 0.1) * 10) / 10));
+    }
+
+    function treeZoomOut() {
+      applyTreeZoom(Math.max(0.3, Math.round((currentTreeZoom - 0.1) * 10) / 10));
+    }
+
+    // ---- RENDER ALL ----
+    function renderAll() {
+      renderQuestion();
+      renderResult();
+      renderTreeDiagram();
+      fitTreeToWidth();
+      syncTreeAccessibility();
+      renderReferenceCards();
+      renderExceptions();
+      renderIndustries();
+    }
+
+    // ---- EXPORT ----
+    function downloadFile(filename, content, mimeType) {
+      var blob = new Blob([content], { type: mimeType });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href     = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function exportPDF() {
+      var colorMap = {
+        'var(--public)':         '#4cc2ff',
+        'var(--general)':        '#7fd18c',
+        'var(--conf-all)':       '#ffc14d',
+        'var(--conf-specific)':  '#ff9f6e',
+        'var(--conf-exception)': '#c8a84b',
+        'var(--hc-all)':         '#ff6f91',
+        'var(--hc-specific)':    '#d94040',
+        'var(--hc-exception)':   '#a85070'
+      };
+
+      var savedByKey = {};
+      state.sessionLog.forEach(function(entry) {
+        if (!savedByKey[entry.labelKey]) savedByKey[entry.labelKey] = entry;
+      });
+
+      var keys = state.visibleLabelKeys;
+      if (keys.length === 0) { return; }
+
+      var industryLabel = state.context.industryLabel || 'All industries';
+      var dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      var cardsHtml = keys.map(function(key) {
+        var label  = model.labels[key];
+        var color  = colorMap[label.color] || '#888';
+        var saved  = savedByKey[key];
+
+        var annotHtml = '';
+        if (saved) {
+          var pathStr = saved.history.map(function(s) { return s.answer; }).join(' \u2192 ');
+          annotHtml = '<div class="annot">'
+            + '<p class="annot-label">\u2713 Labeled by decision flow</p>'
+            + '<p class="annot-rationale">' + escHtml(saved.rationale) + '</p>'
+            + '<p class="annot-path">Path: ' + escHtml(pathStr) + '</p>'
+            + '</div>';
+        }
+
+        var baselineItems = label.baseline.map(function(b) { return '<li>' + escHtml(b) + '</li>'; }).join('');
+        var exampleItems  = label.examples.map(function(e) { return '<li>' + escHtml(e) + '</li>'; }).join('');
+
+        var regHtml = '';
+        if (state.context.regulations && state.context.regulations.length > 0) {
+          var notes = [];
+          state.context.regulations.forEach(function(regKey) {
+            var regNotes = regulationNotes[regKey];
+            if (regNotes && regNotes[key]) { notes.push(regNotes[key]); }
+          });
+          if (notes.length > 0) {
+            regHtml = '<div class="reg">'
+              + '<p class="reg-title">Regulatory considerations</p>'
+              + '<ul>' + notes.map(function(n) { return '<li>' + escHtml(n) + '</li>'; }).join('') + '</ul>'
+              + '</div>';
+          }
+        }
+
+        return '<article class="card" style="border-top:4px solid ' + color + ';-webkit-print-color-adjust:exact;print-color-adjust:exact">'
+          + annotHtml
+          + '<h3>' + escHtml(label.name) + '</h3>'
+          + '<p class="def">' + escHtml(label.definition) + '</p>'
+          + '<p class="section-title">Protection baseline</p>'
+          + '<ul>' + baselineItems + '</ul>'
+          + '<p class="section-title">Common examples</p>'
+          + '<ul>' + exampleItems + '</ul>'
+          + regHtml
+          + '</article>';
+      }).join('');
+
+      // Exceptions section
+      var exceptionsHtml = '';
+      var relevantExceptionIndices = getRelevantExceptionIndices();
+      if (relevantExceptionIndices.length > 0) {
+        var excCards = relevantExceptionIndices.map(function(i) {
+          var exc = model.exceptions[i];
+          var points = exc.points.map(function(p) { return '<li>' + escHtml(p) + '</li>'; }).join('');
+          return '<article class="sm-card">'
+            + '<h3>' + escHtml(exc.title) + '</h3>'
+            + '<ul>' + points + '</ul>'
+            + '</article>';
+        }).join('');
+        exceptionsHtml = '<section class="doc-section">'
+          + '<div class="section-kicker">Exceptions</div>'
+          + '<h2>Explicit clarifications to surface in the tree</h2>'
+          + '<p class="section-desc">Known edge cases and boundary conditions for your industry and data types where the default label logic may not apply.</p>'
+          + '<div class="sm-grid">' + excCards + '</div>'
+          + '</section>';
+      }
+
+      // Examples section
+      var examplesHtml = '';
+      var relevantIndustries = getRelevantIndustries();
+      if (relevantIndustries.length > 0) {
+        var sel = state.context;
+        var dtCount = sel.dataTypes ? sel.dataTypes.length : 0;
+        var examplesHeading = (sel.locked && sel.industry && sel.industry !== 'other')
+          ? escHtml(sel.industryLabel) + ' scenarios' + (dtCount ? ' \u2014 filtered by data type' : '')
+          : 'Cross-industry scenarios';
+        var exCards = relevantIndustries.map(function(card) {
+          var items = card.items.map(function(it) { return '<li>' + escHtml(it) + '</li>'; }).join('');
+          return '<article class="sm-card">'
+            + '<h3>' + escHtml(card.title) + '</h3>'
+            + '<ul>' + items + '</ul>'
+            + '</article>';
+        }).join('');
+        examplesHtml = '<section class="doc-section">'
+          + '<div class="section-kicker">Examples</div>'
+          + '<h2>' + examplesHeading + '</h2>'
+          + '<p class="section-desc">Real-world content scenarios mapped to the label model. Use these to validate your decision.</p>'
+          + '<div class="sm-grid">' + exCards + '</div>'
+          + '</section>';
+      }
+
+      var html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
+        + '<title>SMB DEFEND Sensitivity Labels</title>'
+        + '<style>'
+        + '*{box-sizing:border-box;margin:0;padding:0;}'
+        + 'body{font-family:system-ui,-apple-system,Arial,sans-serif;font-size:12px;line-height:1.5;color:#111;background:#fff;}'
+        + 'header{padding:20px 28px 14px;border-bottom:2px solid #ddd;}'
+        + 'header h1{font-size:17px;font-weight:700;margin-bottom:4px;}'
+        + 'header .meta{font-size:11px;color:#555;}'
+        + 'main{padding:20px 28px;}'
+        + '.doc-section{margin-top:28px;padding-top:20px;border-top:2px solid #e8e8e8;}'
+        + '.section-kicker{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;margin-bottom:4px;}'
+        + '.doc-section h2{font-size:14px;font-weight:700;margin-bottom:4px;}'
+        + '.section-desc{font-size:11px;color:#666;margin-bottom:12px;}'
+        + '.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}'
+        + '.sm-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}'
+        + '.card{border:1px solid #ddd;border-radius:6px;padding:12px 14px;break-inside:avoid;page-break-inside:avoid;}'
+        + '.card h3{font-size:13px;font-weight:700;margin-bottom:5px;}'
+        + '.card .def{font-size:11.5px;color:#333;margin-bottom:8px;}'
+        + '.card .section-title{font-size:10.5px;font-weight:700;color:#444;margin:7px 0 2px;text-transform:uppercase;letter-spacing:0.03em;}'
+        + '.card ul{padding-left:16px;margin-bottom:4px;}'
+        + '.card li{font-size:11px;color:#444;line-height:1.5;}'
+        + '.disclaimer-top{background:#fffaed;border:1px solid #d4a017;border-radius:6px;padding:10px 14px;margin:16px 28px 0;font-size:10.5px;color:#5c4300;line-height:1.5;}'
+        + '.disclaimer-top strong{color:#332500;}'
+        + '.sm-card{border:1px solid #ddd;border-radius:6px;padding:10px 12px;break-inside:avoid;page-break-inside:avoid;}'
+        + '.sm-card h3{font-size:11.5px;font-weight:700;margin-bottom:5px;}'
+        + '.sm-card ul{padding-left:15px;}'
+        + '.sm-card li{font-size:10.5px;color:#444;line-height:1.5;}'
+        + '.annot{background:#eef6ff;border:1px solid #b8d4f0;border-radius:4px;padding:6px 10px;margin-bottom:10px;}'
+        + '.annot-label{font-size:10px;font-weight:700;color:#1a5fa8;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;}'
+        + '.annot-rationale{font-size:11px;color:#222;margin-bottom:2px;}'
+        + '.annot-path{font-size:10px;color:#666;}'
+        + '.reg{margin-top:8px;padding-top:8px;border-top:1px solid #eee;}'
+        + '.reg-title{font-size:10.5px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:3px;}'
+        + '.reg ul{padding-left:16px;} .reg li{font-size:11px;color:#555;line-height:1.5;}'
+        + 'footer{padding:10px 28px;border-top:1px solid #ddd;font-size:10px;color:#999;margin-top:24px;}'
+        + '@media print{'
+        + '  @page{margin:14mm 12mm;size:A4;}'
+        + '  body{font-size:11px;}'
+        + '  .grid{grid-template-columns:1fr 1fr;}'
+        + '  .sm-grid{grid-template-columns:1fr 1fr 1fr;}'
+        + '  .card,.sm-card{break-inside:avoid;page-break-inside:avoid;}'
+        + '  .doc-section{break-before:auto;}'
+        + '  -webkit-print-color-adjust:exact;print-color-adjust:exact;'
+        + '}'
+        + '</style></head><body>'
+        + '<div class="disclaimer-top"><strong>Disclaimer:</strong> This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.</div>'
+        + '<header>'
+        + '<h1>SMB DEFEND Sensitivity Label Reference</h1>'
+        + '<p class="meta">Industry: <strong>' + escHtml(industryLabel) + '</strong>'
+        + ' &nbsp;&middot;&nbsp; ' + keys.length + ' label' + (keys.length === 1 ? '' : 's')
+        + ' &nbsp;&middot;&nbsp; Generated: ' + escHtml(dateStr) + '</p>'
+        + '</header>'
+        + '<main>'
+        + '<div class="section-kicker" style="margin-bottom:10px">Reference</div>'
+        + '<div class="grid">' + cardsHtml + '</div>'
+        + exceptionsHtml
+        + examplesHtml
+        + '</main>'
+        + '<footer>SMB Information Protection Guided Labeling Assistant &nbsp;&middot;&nbsp; For planning purposes only. Validate against current documentation and compliance requirements.</footer>'
+        + '<script>window.onload=function(){window.print();};window.addEventListener("afterprint",function(){window.close();});<\/script>'
+        + '</body></html>';
+
+      var win = window.open('', '_blank', 'width=960,height=750');
+      if (!win) { alert('Please allow pop-ups to use PDF export.'); return; }
+      win.document.write(html);
+      win.document.close();
+    }
+
+    function exportCSV() {
+      var savedByKey = {};
+      state.sessionLog.forEach(function(entry) {
+        if (!savedByKey[entry.labelKey]) savedByKey[entry.labelKey] = entry;
+      });
+
+      var disclaimerText = 'This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.';
+      var rows = [['Disclaimer', disclaimerText], [], ['Label', 'Definition', 'Baseline Requirements', 'Session Saved', 'Session Rationale', 'Decision Path', 'Regulatory Considerations']];
+      state.visibleLabelKeys.forEach(function(key) {
+        var label = model.labels[key];
+        var saved = savedByKey[key] || null;
+        var path  = saved ? saved.history.map(function(h) { return h.question + ' -> ' + h.answer; }).join(' | ') : '';
+
+        // Collect regulatory notes from model for this label key
+        var regLines = [];
+        Object.keys(regulationNotes).forEach(function(regKey) {
+          var entry = regulationNotes[regKey];
+          if (entry && entry[key]) {
+            regLines.push(entry[key]);
+          }
+        });
+        // Append any session-specific regulation names (e.g. "HIPAA, GDPR") not already captured
+        if (saved && saved.regulations && saved.regulations.length > 0) {
+          var regLineText = regLines.join(' | ');
+          saved.regulations.forEach(function(r) {
+            // Only add raw reg name if no model note already mentions it
+            if (regLineText.toLowerCase().indexOf(r.toLowerCase()) === -1) {
+              regLines.push(r);
+            }
+          });
+        }
+
+        rows.push([label.name, label.definition, label.baseline.join('; '), saved ? 'Yes' : 'No', saved ? saved.rationale : '', path, regLines.join(' | ')]);
+      });
+
+      var csv = rows.map(function(row) {
+        return row.map(function(cell) {
+          var s = String(cell == null ? '' : cell).replace(/"/g, '""');
+          return (/[,"\r\n]/.test(s)) ? '"' + s + '"' : s;
+        }).join(',');
+      }).join('\r\n');
+
+      downloadFile('sensitivity-labels-' + new Date().toISOString().slice(0, 10) + '.csv', csv, 'text/csv;charset=utf-8;');
+    }
+
+    function buildExportBar() {
+      if (!exportBarEl) return;
+
+      var lbl = document.createElement('span');
+      lbl.className = 'export-bar-label';
+      lbl.textContent = 'Export:';
+
+      var pdfBtn = document.createElement('button');
+      pdfBtn.className = 'btn-export';
+      pdfBtn.type = 'button';
+      pdfBtn.textContent = '\u2B73 PDF';
+      pdfBtn.setAttribute('aria-label', 'Print or save reference section as PDF');
+      pdfBtn.addEventListener('click', exportPDF);
+
+      var csvBtn = document.createElement('button');
+      csvBtn.className = 'btn-export';
+      csvBtn.type = 'button';
+      csvBtn.textContent = '\u2B73 CSV';
+      csvBtn.setAttribute('aria-label', 'Export label reference data as CSV');
+      csvBtn.addEventListener('click', exportCSV);
+
+      var sep = document.createElement('span');
+      sep.className = 'export-bar-sep';
+      sep.setAttribute('aria-hidden', 'true');
+
+      editLabelsBtnEl = document.createElement('button');
+      editLabelsBtnEl.className = 'btn-export';
+      editLabelsBtnEl.type = 'button';
+      editLabelsBtnEl.textContent = '\u270f Edit labels';
+      editLabelsBtnEl.setAttribute('aria-label', 'Toggle edit mode to remove labels from reference and exports');
+      editLabelsBtnEl.addEventListener('click', function() {
+        editModeActive = !editModeActive;
+        renderReferenceCards();
+      });
+
+      restoreAllBtnEl = document.createElement('button');
+      restoreAllBtnEl.className = 'btn-export';
+      restoreAllBtnEl.type = 'button';
+      restoreAllBtnEl.hidden = true;
+      restoreAllBtnEl.setAttribute('aria-label', 'Restore all removed labels');
+      restoreAllBtnEl.addEventListener('click', function() {
+        state.hiddenLabelKeys = [];
+        renderAll();
+      });
+
+      exportBarEl.appendChild(lbl);
+      exportBarEl.appendChild(pdfBtn);
+      exportBarEl.appendChild(csvBtn);
+      exportBarEl.appendChild(sep);
+      exportBarEl.appendChild(editLabelsBtnEl);
+      exportBarEl.appendChild(restoreAllBtnEl);
+    }
+
+    // ---- EVENT WIRING ----
+    themeMediaQuery.addEventListener("change", function() {
+      if (themePreference === "auto") updateThemeToggleLabel();
+    });
+
+    themeToggleButtonEl.addEventListener("click", cycleThemePreference);
+    closeTreeButtonEl.addEventListener("click", closeTreeVisualization);
+    treeZoomInBtnEl.addEventListener("click", treeZoomIn);
+    treeZoomOutBtnEl.addEventListener("click", treeZoomOut);
+    treeFitWidthBtnEl.addEventListener("click", fitTreeToWidth);
+    window.addEventListener("resize", function() {
+      clearTimeout(window._treeResizeTimer);
+      window._treeResizeTimer = setTimeout(fitTreeToWidth, 150);
+    });
+
+    // ---- INIT ----
+    applyThemePreference(themePreference);
+    setupContextPanel();
+    buildExportBar();
+    renderAll();
+    renderSectionsPlaceholder();
+  </script>
+</body>
+</html>
