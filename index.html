@@ -2894,6 +2894,130 @@
     }
 
     // ---- EXPORT ----
+    // ---- CRYPTO UTILS (Web Crypto API — no external dependencies) ----
+    // Key derivation: PBKDF2-SHA-256 with 310 000 iterations (OWASP 2023 recommendation).
+    // Encryption: AES-GCM-256 with a random 96-bit IV and 128-bit salt per operation.
+    function b64ToBytes(b64) {
+      return Uint8Array.from(atob(b64), function(c) { return c.charCodeAt(0); });
+    }
+    function bytesToB64(bytes) {
+      return btoa(String.fromCharCode.apply(null, Array.from(bytes)));
+    }
+    async function deriveCryptoKey(passphrase, salt) {
+      var keyMaterial = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']
+      );
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: salt, iterations: 310000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+    async function encryptPayload(plaintext, passphrase) {
+      var salt       = crypto.getRandomValues(new Uint8Array(16));
+      var iv         = crypto.getRandomValues(new Uint8Array(12));
+      var key        = await deriveCryptoKey(passphrase, salt);
+      var ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv }, key, new TextEncoder().encode(plaintext)
+      );
+      return JSON.stringify({
+        v:    1,
+        alg:  'AES-GCM-256 / PBKDF2-SHA-256 / 310000 iterations',
+        salt: bytesToB64(salt),
+        iv:   bytesToB64(iv),
+        data: bytesToB64(new Uint8Array(ciphertext))
+      }, null, 2);
+    }
+    async function decryptPayload(encryptedJson, passphrase) {
+      var payload = JSON.parse(encryptedJson);
+      if (payload.v !== 1) throw new Error('Unsupported encrypted file version: ' + payload.v);
+      var plainBuf = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: b64ToBytes(payload.iv) },
+        await deriveCryptoKey(passphrase, b64ToBytes(payload.salt)),
+        b64ToBytes(payload.data)
+      );
+      return new TextDecoder().decode(plainBuf);
+    }
+    async function sha256Hex(text) {
+      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf))
+        .map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    // ---- ENCRYPTED JSON EXPORT ----
+    async function exportEncryptedJSON() {
+      if (state.sessionLog.length === 0) {
+        alert('Nothing to export \u2014 save at least one label result first.');
+        return;
+      }
+      var passphrase = prompt(
+        'Enter a passphrase to protect the export.\n\n' +
+        'Minimum 8 characters. You will need it to decrypt the file later.\n' +
+        'The file is encrypted with AES-GCM-256; your passphrase never leaves this page.'
+      );
+      if (passphrase === null) return;
+      if (passphrase.trim().length < 8) {
+        alert('Passphrase must be at least 8 characters.');
+        return;
+      }
+      try {
+        var payload   = {
+          exportedAt: new Date().toISOString(),
+          context:    state.context,
+          sessionLog: state.sessionLog
+        };
+        var encrypted = await encryptPayload(JSON.stringify(payload, null, 2), passphrase);
+        downloadFile(
+          'sensitivity-session-' + new Date().toISOString().slice(0, 10) + '.enc.json',
+          encrypted,
+          'application/json;charset=utf-8;'
+        );
+        announce('Encrypted session file downloaded.');
+      } catch (err) {
+        alert('Encryption failed: ' + err.message);
+      }
+    }
+
+    // ---- ENCRYPTED JSON IMPORT ----
+    function importEncryptedJSON() {
+      var input    = document.createElement('input');
+      input.type   = 'file';
+      input.accept = '.json';
+      input.addEventListener('change', async function() {
+        var file = input.files[0];
+        if (!file) return;
+        var passphrase = prompt('Enter the passphrase to decrypt \u201c' + file.name + '\u201d.');
+        if (passphrase === null) return;
+        var reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            var plaintext = await decryptPayload(e.target.result, passphrase);
+            var imported  = JSON.parse(plaintext);
+            if (!Array.isArray(imported.sessionLog)) throw new Error('Invalid session file structure.');
+            if (
+              state.sessionLog.length > 0 &&
+              !confirm('Importing will replace the current session log (' + state.sessionLog.length + ' item(s)). Continue?')
+            ) return;
+            state.sessionLog = imported.sessionLog;
+            if (imported.context) {
+              state.context.industry      = imported.context.industry      || null;
+              state.context.industryLabel = imported.context.industryLabel || null;
+              state.context.dataTypes     = imported.context.dataTypes     || [];
+              state.context.regulations   = imported.context.regulations   || [];
+            }
+            renderAll();
+            announce('Encrypted session imported \u2014 ' + state.sessionLog.length + ' item(s) loaded.');
+          } catch (err) {
+            alert('Decryption failed. Wrong passphrase or corrupted file.\n\n' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      });
+      input.click();
+    }
+
     function downloadFile(filename, content, mimeType) {
       var blob = new Blob([content], { type: mimeType });
       var url  = URL.createObjectURL(blob);
@@ -3136,7 +3260,12 @@
         }).join(',');
       }).join('\r\n');
 
-      downloadFile('sensitivity-labels-' + new Date().toISOString().slice(0, 10) + '.csv', csv, 'text/csv;charset=utf-8;');
+      // Append a SHA-256 integrity hash as the final row so recipients can verify the file was not
+      // modified after export. To verify: remove this last row, recompute SHA-256 of the remainder.
+      var filename = 'sensitivity-labels-' + new Date().toISOString().slice(0, 10) + '.csv';
+      sha256Hex(csv).then(function(hash) {
+        downloadFile(filename, csv + '\r\nSHA-256 Integrity Hash,' + hash, 'text/csv;charset=utf-8;');
+      });
     }
 
     function buildExportBar() {
@@ -3184,12 +3313,33 @@
         renderAll();
       });
 
+      var sep2 = document.createElement('span');
+      sep2.className = 'export-bar-sep';
+      sep2.setAttribute('aria-hidden', 'true');
+
+      var encExportBtn = document.createElement('button');
+      encExportBtn.className = 'btn-export';
+      encExportBtn.type = 'button';
+      encExportBtn.textContent = '\uD83D\uDD12 Encrypted JSON';
+      encExportBtn.setAttribute('aria-label', 'Export session as AES-GCM-256 encrypted JSON (requires passphrase)');
+      encExportBtn.addEventListener('click', exportEncryptedJSON);
+
+      var encImportBtn = document.createElement('button');
+      encImportBtn.className = 'btn-export';
+      encImportBtn.type = 'button';
+      encImportBtn.textContent = '\uD83D\uDD13 Import Encrypted';
+      encImportBtn.setAttribute('aria-label', 'Import a previously exported encrypted session file');
+      encImportBtn.addEventListener('click', importEncryptedJSON);
+
       exportBarEl.appendChild(lbl);
       exportBarEl.appendChild(pdfBtn);
       exportBarEl.appendChild(csvBtn);
       exportBarEl.appendChild(sep);
       exportBarEl.appendChild(editLabelsBtnEl);
       exportBarEl.appendChild(restoreAllBtnEl);
+      exportBarEl.appendChild(sep2);
+      exportBarEl.appendChild(encExportBtn);
+      exportBarEl.appendChild(encImportBtn);
     }
 
     // ---- EVENT WIRING ----
