@@ -3320,26 +3320,26 @@
       var encExportBtn = document.createElement('button');
       encExportBtn.className = 'btn-export';
       encExportBtn.type = 'button';
-      encExportBtn.textContent = '\uD83D\uDD12 Encrypted JSON';
+      encExportBtn.textContent = 'Export JSON (Encrypted)';
       encExportBtn.setAttribute('aria-label', 'Export session as AES-GCM-256 encrypted JSON (requires passphrase)');
       encExportBtn.addEventListener('click', exportEncryptedJSON);
 
       var encImportBtn = document.createElement('button');
       encImportBtn.className = 'btn-export';
       encImportBtn.type = 'button';
-      encImportBtn.textContent = '\uD83D\uDD13 Import Encrypted';
+      encImportBtn.textContent = 'Import JSON (Encrypted)';
       encImportBtn.setAttribute('aria-label', 'Import a previously exported encrypted session file');
       encImportBtn.addEventListener('click', importEncryptedJSON);
 
       exportBarEl.appendChild(lbl);
       exportBarEl.appendChild(pdfBtn);
       exportBarEl.appendChild(csvBtn);
-      exportBarEl.appendChild(sep);
-      exportBarEl.appendChild(editLabelsBtnEl);
-      exportBarEl.appendChild(restoreAllBtnEl);
       exportBarEl.appendChild(sep2);
       exportBarEl.appendChild(encExportBtn);
       exportBarEl.appendChild(encImportBtn);
+      exportBarEl.appendChild(sep);
+      exportBarEl.appendChild(editLabelsBtnEl);
+      exportBarEl.appendChild(restoreAllBtnEl);
     }
 
     // ---- EVENT WIRING ----
