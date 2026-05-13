@@ -1078,7 +1078,7 @@
     <header class="hero">
       <div class="eyebrow">Introduction</div>
       <h1>SMB Information Protection Guided Labeling Assistant</h1>
-      <p>This assistant turns the 8-label DEFEND-aligned model into a working decision tool with common examples and explicit exceptions in one interactive flow.</p>
+      <p>This assistant turns the Secure by Default labeling model into a working decision tool with common examples and explicit exceptions in one interactive flow.</p>
       <!--<div class="fluent-note">Fluent 2-inspired interface</div>-->
       <div class="hero-actions">
         <button id="themeToggleButton" class="secondary" type="button" aria-label="Change color theme">Theme: Auto</button>
@@ -1177,7 +1177,7 @@
 
     <section id="referenceSection" class="panel section" aria-labelledby="modelHeading" hidden>
       <div class="kicker">Reference</div>
-      <h2 id="modelHeading">8-label DEFEND-aligned model</h2>
+      <h2 id="modelHeading">Secure by Default labeling model</h2>
       <p class="subtle">Each card defines one sensitivity label — what it means, the protection baseline it requires, and any regulatory considerations relevant to your context. Cards are filtered to your selected industry and data types. Labels you've confirmed through the decision flow are annotated with a colored badge. Use <strong>Edit labels</strong> to remove any labels you don't need, then export the remaining set as a PDF or CSV.</p>
       <div id="exportBar" class="export-bar"></div>
       <div id="filterChipRow" class="filter-chip-row"></div>
@@ -2648,7 +2648,7 @@
       exceptionCardsEl.innerHTML = msg;
       industryCardsEl.innerHTML = msg;
       filterChipRowEl.innerHTML = "";
-      document.getElementById("modelHeading").textContent = "8-label DEFEND-aligned model";
+      document.getElementById("modelHeading").textContent = "Secure by Default labeling model";
       document.getElementById("exceptionsHeading").textContent = "Explicit clarifications to surface in the tree";
       document.getElementById("examplesHeading").textContent = "Cross-industry scenarios to keep the tree inclusive";
     }
@@ -2762,7 +2762,7 @@
       if (state.context.locked && state.context.industry && state.context.industry !== "other") {
         heading.textContent = "Relevant labels for " + state.context.industryLabel;
       } else {
-        heading.textContent = "8-label DEFEND-aligned model";
+        heading.textContent = "Secure by Default labeling model";
       }
 
       // Update export/edit button states
@@ -3158,7 +3158,7 @@
       }
 
       var html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">'
-        + '<title>SMB DEFEND Sensitivity Labels</title>'
+        + '<title>SMB Secure by Default Sensitivity Labels</title>'
         + '<style>'
         + '*{box-sizing:border-box;margin:0;padding:0;}'
         + 'body{font-family:system-ui,-apple-system,Arial,sans-serif;font-size:12px;line-height:1.5;color:#111;background:#fff;}'
@@ -3204,7 +3204,7 @@
         + '</style></head><body>'
         + '<div class="disclaimer-top"><strong>Disclaimer:</strong> This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.</div>'
         + '<header>'
-        + '<h1>SMB DEFEND Sensitivity Label Reference</h1>'
+        + '<h1>SMB Secure by Default Sensitivity Label Reference</h1>'
         + '<p class="meta">Industry: <strong>' + escHtml(industryLabel) + '</strong>'
         + ' &nbsp;&middot;&nbsp; ' + keys.length + ' label' + (keys.length === 1 ? '' : 's')
         + ' &nbsp;&middot;&nbsp; Generated: ' + escHtml(dateStr) + '</p>'
