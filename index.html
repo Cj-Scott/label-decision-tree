@@ -1131,7 +1131,7 @@
       </div>
       <div class="disclaimer-banner">
         <strong>Disclaimer:</strong>
-        This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.
+        This tool is provided as-is. It is not a Microsoft product. There is no warranty, no SLA, and engineering / product teams must not take dependencies on it
       </div>
     </header>
 
@@ -3340,7 +3340,7 @@
         + '  -webkit-print-color-adjust:exact;print-color-adjust:exact;'
         + '}'
         + '</style></head><body>'
-        + '<div class="disclaimer-top"><strong>Disclaimer:</strong> This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.</div>'
+        + '<div class="disclaimer-top"><strong>Disclaimer:</strong> This tool is provided as-is. It is not a Microsoft product. There is no warranty, no SLA, and engineering / product teams must not take dependencies on it</div>'
         + '<header>'
         + '<h1>SMB Secure by Default Sensitivity Label Reference</h1>'
         + '<p class="meta">Industry: <strong>' + escHtml(industryLabel) + '</strong>'
@@ -3353,7 +3353,7 @@
         + exceptionsHtml
         + examplesHtml
         + '</main>'
-        + '<footer>SMB Data Security Guided Assistant &nbsp;&middot;&nbsp; For planning purposes only. Validate against current documentation and compliance requirements.</footer>'
+        + '<footer>SMB Data Security Guided Assistant &nbsp;&middot;&nbsp; This tool is provided as-is. It is not a Microsoft product. There is no warranty, no SLA, and engineering / product teams must not take dependencies on it</footer>'
         + '<script>window.onload=function(){window.print();};window.addEventListener("afterprint",function(){window.close();});<\/script>'
         + '</body></html>';
 
@@ -3369,7 +3369,7 @@
         if (!savedByKey[entry.labelKey]) savedByKey[entry.labelKey] = entry;
       });
 
-      var disclaimerText = 'This open-source material is provided as a guide for discussion and implementation planning only. It is not a definitive recommendation, legal advice, or a final Microsoft policy position. Validate decisions against current product documentation, organizational requirements, and legal or compliance guidance.';
+      var disclaimerText = 'This tool is provided as-is. It is not a Microsoft product. There is no warranty, no SLA, and engineering / product teams must not take dependencies on it';
       var rows = [['Disclaimer', disclaimerText], [], ['Label', 'Definition', 'Baseline Requirements', 'Session Saved', 'Session Rationale', 'Decision Path', 'Regulatory Considerations']];
       state.visibleLabelKeys.forEach(function(key) {
         var label = model.labels[key];
