@@ -3093,10 +3093,9 @@
 
     // ---- ENCRYPTED JSON EXPORT ----
     async function exportEncryptedJSON() {
-      if (state.sessionLog.length === 0) {
-        alert('Nothing to export \u2014 save at least one label result first.');
-        return;
-      }
+      var keys = state.visibleLabelKeys.slice();
+      if (keys.length === 0) { return; }
+
       var passphrase = prompt(
         'Enter a passphrase to protect the export.\n\n' +
         'Minimum 8 characters. You will need it to decrypt the file later.\n' +
@@ -3108,9 +3107,21 @@
         return;
       }
       try {
+        var labels = keys.map(function(key) {
+          var label = model.labels[key];
+          return {
+            key: key,
+            name: label.name,
+            definition: label.definition,
+            baseline: label.baseline.slice(),
+            examples: label.examples.slice()
+          };
+        });
         var payload   = {
           exportedAt: new Date().toISOString(),
           context:    state.context,
+          labels:     labels,
+          labelKeys:  keys,
           sessionLog: state.sessionLog
         };
         var encrypted = await encryptPayload(JSON.stringify(payload, null, 2), passphrase);
